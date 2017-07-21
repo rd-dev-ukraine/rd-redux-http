@@ -8,6 +8,7 @@
     "@types/react": "^15.0.38",
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.46",
+    "rd-redux-http": "file:../..",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",

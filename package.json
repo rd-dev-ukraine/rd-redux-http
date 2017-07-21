@@ -13,13 +13,16 @@
   },
   "author": "rd-dev",
   "license": "ISC",
+  "types": "dist/typings/index.d.ts",
   "dependencies": {
+    "uuid": "^3.1.0",
+    "redux": "^3.6.0"
+  },
+  "devDependencies": {
     "@types/node": "^8.0.14",
     "@types/uuid": "^3.4.0",
-    "redux": "^3.6.0",
     "tslint": "^4.5.1",
     "tslint-loader": "^3.5.3",
-    "typescript": "^2.4.1",
-    "uuid": "^3.1.0"
+    "typescript": "^2.4.1"
   }
 }
