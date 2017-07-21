@@ -25,7 +25,7 @@
     "outDir": "dist"
   },
   "include": [
-    "index.ts"
+    "src/index.ts"
   ],
   "exclude": [
     "dist",
