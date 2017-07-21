@@ -1,0 +1,25 @@
+{
+  "name": "rd-redux-http",
+  "version": "0.0.1",
+  "private": false,
+  "description": "HTTP Network requests integrated with Redux",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rd-dev-ukraine/rd-redux-http.git"
+  },
+  "author": "rd-dev",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^8.0.14",
+    "@types/uuid": "^3.4.0",
+    "redux": "^3.6.0",
+    "tslint": "^4.5.1",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.4.1",
+    "uuid": "^3.1.0"
+  }
+}
