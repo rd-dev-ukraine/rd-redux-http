@@ -158,9 +158,11 @@ var ReduxHttpFetchRequestBase = (function (_super) {
                     type: action_helpers_1.buildReduxHttpActionType(true, _this.asyncWorkerId),
                     ok: false,
                     isHttpError: true,
+                    isAuthorizationError: response.status === 401,
+                    status: response.status,
                     errors: {
                         error: response.status === 401 ? "Not authorized" : "Status Code",
-                        status: response.statusText
+                        details: response.statusText
                     },
                     request: action,
                     params: params
@@ -172,9 +174,11 @@ var ReduxHttpFetchRequestBase = (function (_super) {
                 type: action_helpers_1.buildReduxHttpActionType(true, _this.asyncWorkerId),
                 ok: false,
                 isHttpError: true,
+                isAuthorizationError: false,
+                status: undefined,
                 errors: {
                     error: "Transport Error",
-                    status: "" + err
+                    details: "" + err
                 },
                 request: action,
                 params: params

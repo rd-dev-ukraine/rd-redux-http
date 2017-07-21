@@ -149,9 +149,11 @@ export abstract class ReduxHttpFetchRequestBase<TParams, TResult, TError> extend
                     type: buildReduxHttpActionType(true, this.asyncWorkerId),
                     ok: false,
                     isHttpError: true,
+                    isAuthorizationError: response.status === 401,
+                    status: response.status,
                     errors: {
                         error: response.status === 401 ? "Not authorized" : "Status Code",
-                        status: response.statusText
+                        details: response.statusText
                     },
                     request: action,
                     params
@@ -164,9 +166,11 @@ export abstract class ReduxHttpFetchRequestBase<TParams, TResult, TError> extend
                 type: buildReduxHttpActionType(true, this.asyncWorkerId),
                 ok: false,
                 isHttpError: true,
+                isAuthorizationError: false,
+                status: undefined,
                 errors: {
                     error: "Transport Error",
-                    status: `${err}`
+                    details: `${err}`
                 },
                 request: action,
                 params

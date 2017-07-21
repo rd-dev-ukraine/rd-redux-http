@@ -61,13 +61,15 @@ export interface ReduxHttpErrorResult<TParams, TError> extends ReduxHttpActionBa
 export interface ReduxHttpTransportError<TParams> extends ReduxHttpActionBase<TParams> {
     ok: false;
     isHttpError: true;
+    isAuthorizationError: boolean;
+    status: number | undefined  ;
     errors: HttpError;
     request: ReduxHttpCustomRequestAction<any>;
 }
 
 export interface HttpError {
     error: "Not authorized" | "Status Code" | "Transport Error";
-    status: string;
+    details: string;
 }
 
 /**
