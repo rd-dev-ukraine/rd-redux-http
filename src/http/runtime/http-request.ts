@@ -1,7 +1,7 @@
 import { HttpRequest, HttpResult, HttpRequestWithBody, HttpRequestWithBodyTypes, TransportErrorResult, OkResult, ErrorResponseResult, AuthorizationErrorResult } from "../api";
 import { urlFromParams } from "./url-builder";
 
-export interface HttpRequestConfig<TParams, TBody, TResult, TError> {
+export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
     /** URL with parameter substitutions */
     urlTemplate: string;
     /** True if values from params object not used in URL will be appended as query string. */
@@ -22,19 +22,25 @@ export interface HttpRequestConfig<TParams, TBody, TResult, TError> {
     /**
      * Converts a fetch response to a typed results.
      */
-    processResult: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>;
+    processResponse: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>;
+
+    /**
+     * Converts string body to result or error.
+     */
+    convertResult: (body: string) => Promise<TResult | TError>;
 }
 
-export function createHttpRequest<TParams, TBody, TResult, TError>(config: HttpRequestConfig<TParams, TBody, TResult, TError>): HttpRequestWithBody<TBody, TParams, TResult, TError> {
+export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): HttpRequestWithBody<TBody, TParams, TResult, TError> {
     const result = ((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
 
         const url = urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
         const request = config.pre.reduce((request, pre) => pre(request, params, body), new Request(url));
 
         const actualFetch: typeof config.fetch = config.fetch || ((request: Request, params: TParams, body: TBody) => fetch(request));
+        const processResponse = config.processResponse || (defaultProcessResponseFactory(config));
 
         return actualFetch(request, params, body).then(
-            response => (config.processResult || defaultProcessResult)(response, params, body),
+            response => processResponse(response, params, body),
             error => Promise.resolve<TransportErrorResult>({
                 ok: false,
                 type: "transport",
@@ -49,70 +55,78 @@ export function createHttpRequest<TParams, TBody, TResult, TError>(config: HttpR
     return result;
 }
 
-function defaultProcessResult<TBody, TParams, TResult, TError>(response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> {
-    if (response.ok || response.status === 400) {
-        return response.clone()
-            .text()
-            .then(text => {
-                try {
-                    const parsed = JSON.parse(text);
+function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): typeof config.processResponse {
+    const convertResult = config.convertResult || (
+        (text: string) => new Promise<TResult | TError>((resolve, reject) => {
+            try {
+                const result = JSON.parse(text);
 
-                    if (response.ok) {
-                        const result: OkResult<TResult> = {
-                            ok: true,
-                            result: parsed as TResult
-                        };
+                resolve(result);
+            } catch (e) {
+                reject(e);
+            }
+        })
+    );
 
-                        return result;
-                    } else {
-                        const error: ErrorResponseResult<TError> = {
+    return (response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
+        if (response.ok || response.status === 400) {
+            return response.clone()
+                .text()
+                .then(text => {
+                    return convertResult(text)
+                        .then(parsed => {
+                            if (response.ok) {
+                                const result: OkResult<TResult> = {
+                                    ok: true,
+                                    result: parsed as TResult
+                                };
+
+                                return result;
+                            } else {
+                                const error: ErrorResponseResult<TError> = {
+                                    ok: false,
+                                    type: "response",
+                                    error: parsed as TError
+                                };
+
+                                return error;
+                            }
+                        }, err => Promise.resolve<TransportErrorResult>({
                             ok: false,
-                            type: "response",
-                            error: parsed as TError
-                        };
+                            type: "transport",
+                            reason: "invalid-body",
+                            statusCode: response.status,
+                            error: err
+                        }));
 
-                        return error;
-                    }
-
-                } catch (e) {
-                    const errorResult: TransportErrorResult = {
-                        ok: false,
-                        type: "transport",
-                        reason: "invalid-body",
-                        statusCode: response.status,
-                        error: e
-                    };
-
-                    return errorResult;
+                }, err => Promise.resolve<TransportErrorResult>({
+                    ok: false,
+                    type: "transport",
+                    error: err,
+                    reason: "invalid-body",
+                    statusCode: response.status
+                }));
+        } else {
+            if (response.status === 401 || response.status === 403) {
+                const errorResult: AuthorizationErrorResult = {
+                    ok: false,
+                    type: "authorization",
+                    status: response.status
                 }
 
-            }, err => Promise.resolve<TransportErrorResult>({
-                ok: false,
-                type: "transport",
-                error: err,
-                reason: "invalid-body",
-                statusCode: response.status
-            }));
-    } else {
-        if (response.status === 401 || response.status === 403) {
-            const errorResult: AuthorizationErrorResult = {
-                ok: false,
-                type: "authorization",
-                status: response.status
+                return Promise.resolve(errorResult);
+
+            } else {
+                const errorResult: TransportErrorResult = {
+                    ok: false,
+                    type: "transport",
+                    error: response.statusText,
+                    reason: "other",
+                    statusCode: response.status
+                };
+
+                return Promise.resolve(errorResult);
             }
-
-            return Promise.resolve(errorResult);
-
-        } else {
-            const errorResult: TransportErrorResult = {
-                ok: false,
-                type: "transport",
-                error: response.statusText,
-                reason: "other",
-                statusCode: response.status
-            };
-
-            return Promise.resolve(errorResult);
         }
     }
 }
