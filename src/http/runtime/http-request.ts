@@ -1,34 +1,17 @@
-import { HttpRequest, HttpResult, HttpRequestWithBody, HttpRequestWithBodyTypes, TransportErrorResult, OkResult, ErrorResponseResult, AuthorizationErrorResult } from "../api";
+import {
+    HttpRequest,
+    HttpResult,
+    HttpRequestWithBody,
+    HttpRequestWithBodyTypes,
+    TransportErrorResult,
+    OkResult,
+    ErrorResponseResult,
+    AuthorizationErrorResult,
+    HttpRequestConfig
+} from "../api";
+
 import { urlFromParams } from "./url-builder";
 
-export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
-    /** URL with parameter substitutions */
-    urlTemplate: string;
-    /** True if values from params object not used in URL will be appended as query string. */
-    appendRestOfParamsToQueryString: boolean;
-
-    method: string;
-
-    /** An array of functions alters the initial request. */
-    pre: Array<(request: Request, params: TParams, body: TBody) => Request>;
-
-    /** 
-     * Replace of default fetch function.  
-     * Use it if you need to implement for example retry logic 
-     * or authentication token refreshing etc.
-     */
-    fetch: (request: Request, params: TParams, body: TBody) => Promise<Response>;
-
-    /**
-     * Converts a fetch response to a typed results.
-     */
-    processResponse: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>;
-
-    /**
-     * Converts string body to result or error.
-     */
-    convertResult: (body: string) => Promise<TResult | TError>;
-}
 
 export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): HttpRequestWithBody<TBody, TParams, TResult, TError> {
     const result = ((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
