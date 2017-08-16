@@ -19,6 +19,13 @@ import { createHttpRequest } from "../runtime";
 class EntryPoint implements HttpRequestEntryPoint {
 
     fetch<TParams = {}>(method: string, urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
+        if (!method) {
+            throw new Error("HTTP verb is not defined.");
+        }
+        if (!urlTemplate) {
+            throw new Error("URL template is not defined.");
+        }
+
         const config: HttpRequestConfig<any, TParams, any, any> = {
             method,
             urlTemplate,

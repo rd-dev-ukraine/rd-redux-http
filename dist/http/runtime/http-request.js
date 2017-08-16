@@ -4,7 +4,9 @@ var url_builder_1 = require("./url-builder");
 function createHttpRequest(config) {
     var result = (function (params, body) {
         var url = url_builder_1.urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
-        var request = config.pre.reduce(function (request, pre) { return pre(request, params, body); }, new Request(url));
+        var request = (config.pre || []).reduce(function (request, pre) { return pre(request, params, body); }, new Request(url, {
+            method: config.method
+        }));
         var actualFetch = config.fetch || (function (request, params, body) { return fetch(request); });
         var processResponse = config.processResponse || (defaultProcessResponseFactory(config));
         return actualFetch(request, params, body).then(function (response) { return processResponse(response, params, body); }, function (error) { return Promise.resolve({

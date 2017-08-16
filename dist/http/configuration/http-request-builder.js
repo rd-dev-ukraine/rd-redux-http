@@ -7,6 +7,12 @@ var EntryPoint = (function () {
     }
     EntryPoint.prototype.fetch = function (method, urlTemplate, appendRestOfParamsToQueryString) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
+        if (!method) {
+            throw new Error("HTTP verb is not defined.");
+        }
+        if (!urlTemplate) {
+            throw new Error("URL template is not defined.");
+        }
         var config = {
             method: method,
             urlTemplate: urlTemplate,

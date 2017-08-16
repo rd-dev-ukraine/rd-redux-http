@@ -24,12 +24,12 @@ export interface HttpRequestConfigurator<TParams> {
     formsBody<TBody>(): HttpRequestConfiguratorWithBody<TBody, TParams>;
     pre(prepareRequest: PrepareRequestFunction<TParams>): this;
     withFetch(customFetch: (request: Request, params: TParams) => Promise<Response>): this;
-    resultFromJson<TResult, TError>(): HttpRequestBuilder<TParams, TResult, TError>;
+    resultFromJson<TResult, TError = any>(): HttpRequestBuilder<TParams, TResult, TError>;
 }
 export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
     pre(prepareRequest: PrepareRequestWithBodyFunction<TBody, TParams>): this;
     withFetch(customFetch: (request: Request, params: TParams, body: TBody) => Promise<Response>): this;
-    resultFromJson<TResult, TError>(): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
+    resultFromJson<TResult, TError = any>(): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
 }
 export interface HttpRequestBuilder<TParams, TResult, TError> {
     build(): HttpRequest<TParams, TResult, TError>;

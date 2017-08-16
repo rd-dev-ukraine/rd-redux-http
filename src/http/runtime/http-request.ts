@@ -16,7 +16,11 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
     const result = ((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
 
         const url = urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
-        const request = config.pre.reduce((request, pre) => pre(request, params, body), new Request(url));
+        const request = (config.pre || []).reduce(
+            (request, pre) => pre(request, params, body),
+            new Request(url, {
+                method: config.method
+            }));
 
         const actualFetch: typeof config.fetch = config.fetch || ((request: Request, params: TParams, body: TBody) => fetch(request));
         const processResponse = config.processResponse || (defaultProcessResponseFactory(config));
