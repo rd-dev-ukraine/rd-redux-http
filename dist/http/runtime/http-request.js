@@ -15,6 +15,8 @@ function createHttpRequest(config) {
         }); });
     });
     result.types = new HttpTypes();
+    result.method = config.method;
+    result.urlTemplate = config.urlTemplate;
     return result;
 }
 exports.createHttpRequest = createHttpRequest;
