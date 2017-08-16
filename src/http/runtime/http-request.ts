@@ -33,6 +33,8 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
     }) as any as HttpRequestWithBody<TBody, TParams, TResult, TError>;
 
     result.types = new HttpTypes<TBody, TParams, TResult, TError>();
+    result.method = config.method;
+    result.urlTemplate = config.urlTemplate;
 
     return result;
 }
