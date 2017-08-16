@@ -27,7 +27,7 @@ class EntryPoint implements HttpRequestEntryPoint {
             convertResult: undefined,
             fetch: undefined,
             pre: [],
-            processResponse: undefined
+            processResponse: undefined as any
         };
 
         return new RequestConfigurator<TParams>(config);
@@ -158,14 +158,14 @@ class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TPa
 }
 
 class RequestWithBodyBuilder<TBody, TParams, TResult, TError> implements HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
-    constructor(private config: HttpRequestConfig<undefined, TParams, TResult, TError>) {
+    constructor(private config: HttpRequestConfig<TBody, TParams, TResult, TError>) {
         if (!config) {
             throw new Error("Configuration object is missing.");
         }
     }
 
     build(): HttpRequestWithBody<TBody, TParams, TResult, TError> {
-        return createHttpRequest<TBody, TParams, TResult, TError>(this.config) as any;
+        return createHttpRequest<TBody, TParams, TResult, TError>(this.config as any) as any;
     }
 }
 

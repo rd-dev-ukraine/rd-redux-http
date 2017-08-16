@@ -12,7 +12,7 @@ var querystring = require("querystring");
 var paramRegex = /:[A-Za-z]\w{1,}/g;
 function urlFromParams(urlTemplate, appendRestToQueryString, params) {
     var p = __assign({}, (params || {}));
-    var url = urlTemplate.replace(this.paramRegex, function (match) {
+    var url = urlTemplate.replace(paramRegex, function (match) {
         match = match.replace(/[:()]/g, "");
         var value = encodeURIComponent(p[match] || "");
         delete p[match];

@@ -20,7 +20,7 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
      * Use it if you need to implement for example retry logic
      * or authentication token refreshing etc.
      */
-    fetch: (request: Request, params: TParams, body: TBody) => Promise<Response>;
+    fetch?: (request: Request, params: TParams, body: TBody) => Promise<Response>;
 
     /**
      * Converts a fetch response to a typed results.
@@ -30,7 +30,7 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
     /**
      * Converts string body to result or error.
      */
-    convertResult: (body: string) => Promise<TResult | TError>;
+    convertResult?: (body: string) => Promise<TResult | TError>;
 }
 
 export interface HttpRequestEntryPoint {

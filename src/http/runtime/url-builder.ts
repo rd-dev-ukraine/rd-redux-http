@@ -7,7 +7,7 @@ const paramRegex: RegExp = /:[A-Za-z]\w{1,}/g;
 export function urlFromParams(urlTemplate: string, appendRestToQueryString: boolean, params: any): string {
     const p: any = { ...(params || {}) };
 
-    const url = urlTemplate.replace(this.paramRegex, (match: string) => {
+    const url = urlTemplate.replace(paramRegex, (match: string) => {
         match = match.replace(/[:()]/g, "");
 
         const value = encodeURIComponent(p[match] || "");

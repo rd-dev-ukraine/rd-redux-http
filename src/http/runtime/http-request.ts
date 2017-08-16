@@ -1,5 +1,4 @@
 import {
-    HttpRequest,
     HttpResult,
     HttpRequestWithBody,
     HttpRequestWithBodyTypes,

@@ -7,17 +7,17 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
     appendRestOfParamsToQueryString: boolean;
     method: string;
     pre: PrepareRequestWithBodyFunction<TBody, TParams>[];
-    fetch: (request: Request, params: TParams, body: TBody) => Promise<Response>;
+    fetch?: (request: Request, params: TParams, body: TBody) => Promise<Response>;
     processResponse: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>;
-    convertResult: (body: string) => Promise<TResult | TError>;
+    convertResult?: (body: string) => Promise<TResult | TError>;
 }
 export interface HttpRequestEntryPoint {
     fetch<TParams = {}>(method: string, urlTemplate: string): HttpRequestConfigurator<TParams>;
-    get<TParams = {}>(urlTemplate: any): HttpRequestConfigurator<TParams>;
-    post<TParams = {}>(urlTemplate: any): HttpRequestConfigurator<TParams>;
-    put<TParams = {}>(urlTemplate: any): HttpRequestConfigurator<TParams>;
-    patch<TParams = {}>(urlTemplate: any): HttpRequestConfigurator<TParams>;
-    delete<TParams = {}>(urlTemplate: any): HttpRequestConfigurator<TParams>;
+    get<TParams = {}>(urlTemplate: string): HttpRequestConfigurator<TParams>;
+    post<TParams = {}>(urlTemplate: string): HttpRequestConfigurator<TParams>;
+    put<TParams = {}>(urlTemplate: string): HttpRequestConfigurator<TParams>;
+    patch<TParams = {}>(urlTemplate: string): HttpRequestConfigurator<TParams>;
+    delete<TParams = {}>(urlTemplate: string): HttpRequestConfigurator<TParams>;
 }
 export interface HttpRequestConfigurator<TParams> {
     jsonBody<TBody>(): HttpRequestConfiguratorWithBody<TBody, TParams>;
