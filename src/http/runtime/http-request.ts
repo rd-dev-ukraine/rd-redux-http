@@ -57,7 +57,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
             return response.clone()
                 .text()
                 .then(text => {
-                    return convertResult(text)
+                    return convertResult(text, response.ok, params)
                         .then(parsed => {
                             if (response.ok) {
                                 const result: OkResult<TResult> = {

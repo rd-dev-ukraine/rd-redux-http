@@ -35,7 +35,7 @@ function defaultProcessResponseFactory(config) {
             return response.clone()
                 .text()
                 .then(function (text) {
-                return convertResult(text)
+                return convertResult(text, response.ok, params)
                     .then(function (parsed) {
                     if (response.ok) {
                         var result = {
