@@ -56,7 +56,7 @@ interface PostValidationError {
 
  const createPostRequest = http.put<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
             .jsonBody<Post>()
-            .resultFromJson<Post, PostValidationError>()
+            .resultFromJson<Post, PostValidationError>() // Error type is optional
             .build();
 
  createPost({ postId: 1 }, {
