@@ -3,7 +3,7 @@ import "should";
 
 import "isomorphic-fetch";
 
-import { http, OkResult } from "../../src";
+import { http, OkResult } from "../src";
 
 
 describe("http", () => {
@@ -52,7 +52,34 @@ describe("http", () => {
                     userId: 1
                 }
             });
-    })
+    });
+
+    it("POST to non-existing address should produce TransportErrorResult", () => {
+        const createPost = http.put<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
+            .jsonBody<Post>()
+            .resultFromJson<Post>()
+            .build();
+
+        return createPost({ postId: -1 }, {
+            id: 1,
+            title: "",
+            body: "",
+            userId: -1
+        })
+            .should
+            .finally
+            .match((actual: any) => {
+                const expected = {
+                    error: "Not Found",
+                    ok: false,
+                    reason: "other",
+                    statusCode: 404,
+                    type: "transport"
+                };
+
+                return actual.should.eql(expected);
+            });
+    });
 });
 
 interface Post {
