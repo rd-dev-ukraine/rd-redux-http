@@ -74,7 +74,7 @@ describe("http", () => {
                     ok: false,
                     reason: "other",
                     statusCode: 404,
-                    type: "transport"
+                    errorType: "transport"
                 };
 
                 return actual.should.eql(expected);

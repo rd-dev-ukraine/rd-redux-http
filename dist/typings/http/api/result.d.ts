@@ -4,17 +4,17 @@ export interface OkResult<TResult> {
 }
 export interface ErrorResponseResult<TError> {
     ok: false;
-    type: "response";
+    errorType: "response";
     error: TError;
 }
 export interface AuthorizationErrorResult {
     ok: false;
-    type: "authorization";
+    errorType: "authorization";
     status: number;
 }
 export interface TransportErrorResult {
     ok: false;
-    type: "transport";
+    errorType: "transport";
     reason: "fetch-rejected" | "invalid-body" | "other";
     statusCode?: number;
     error: any;

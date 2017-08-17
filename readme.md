@@ -1,10 +1,79 @@
 # Motivation
 
-Redux naturally doesn't support any async activity, 
-only via middlewares of special type.
-This requires writing middleware code for each HTTP request or writing async action creators.
+Typescript-powered library for making HTTP requests integrated with redux.
 
-This library eliminates the boilerplate.
+* Configure HTTP requests with fluent interface and use it for running request or dispatching an action
+* Process successfull and error responses and status codes without writing boilerplate code
+* Creates actions for running HTTP request and automatically dispatches actions for successfull and error results
+* Provides a set of type guards for checking action types
 
-It allows to run HTTP requests as a dispatching of regular actions.
-Then you could check actions if it result of corresponding HTTP request.
+
+# Using without redux
+
+Perform GET request with parameters:
+
+``` typescript
+// Typescript
+import { http } from "rd-redux-http";
+
+interface Post {
+    userId: number;
+    id: number;
+    title: string;
+    body: string;
+}
+
+const getPostByIdRequest = http.get<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
+            .resultFromJson<Post>()
+            .build();
+
+getPostByIdRequest({ postId: 1})
+    .then(response => {
+        if (response.ok) {
+            console.log(response.result); // Data of Post with id=1 
+        } else {
+            // Process error here
+        }
+    });
+
+```
+
+Perform POST request with body: 
+
+``` typescript
+import { http } from "rd-redux-http";
+
+interface Post {
+    userId: number;
+    id: number;
+    title: string;
+    body: string;
+}
+
+interface PostValidationError {
+    [field: string]: string;
+}
+
+ const createPostRequest = http.put<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
+            .jsonBody<Post>()
+            .resultFromJson<Post, PostValidationError>()
+            .build();
+
+ createPost({ postId: 1 }, {
+        id: 1,
+        title: "test",
+        body: "body",
+        userId: 1
+    })
+    .then(response => {
+        if (response.ok) {
+            // Process correct response here
+        } else {
+            if (response.errorType === "response") {
+                // Server responsed with status 400 Bad request and sent validation errors in body
+                console.log(response.error["title"]);
+            }
+        }
+    });
+
+```

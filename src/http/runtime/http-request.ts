@@ -29,7 +29,7 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
             response => processResponse(response, params, body),
             error => Promise.resolve<TransportErrorResult>({
                 ok: false,
-                type: "transport",
+                errorType: "transport",
                 reason: "fetch-rejected",
                 error
             }));
@@ -73,7 +73,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
                             } else {
                                 const error: ErrorResponseResult<TError> = {
                                     ok: false,
-                                    type: "response",
+                                    errorType: "response",
                                     error: parsed as TError
                                 };
 
@@ -81,7 +81,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
                             }
                         }, err => Promise.resolve<TransportErrorResult>({
                             ok: false,
-                            type: "transport",
+                            errorType: "transport",
                             reason: "invalid-body",
                             statusCode: response.status,
                             error: err
@@ -89,7 +89,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
 
                 }, err => Promise.resolve<TransportErrorResult>({
                     ok: false,
-                    type: "transport",
+                    errorType: "transport",
                     error: err,
                     reason: "invalid-body",
                     statusCode: response.status
@@ -98,7 +98,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
             if (response.status === 401 || response.status === 403) {
                 const errorResult: AuthorizationErrorResult = {
                     ok: false,
-                    type: "authorization",
+                    errorType: "authorization",
                     status: response.status
                 }
 
@@ -107,7 +107,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
             } else {
                 const errorResult: TransportErrorResult = {
                     ok: false,
-                    type: "transport",
+                    errorType: "transport",
                     error: response.statusText,
                     reason: "other",
                     statusCode: response.status

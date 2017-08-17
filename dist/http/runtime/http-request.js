@@ -11,7 +11,7 @@ function createHttpRequest(config) {
         var processResponse = config.processResponse || (defaultProcessResponseFactory(config));
         return actualFetch(request, params, body).then(function (response) { return processResponse(response, params, body); }, function (error) { return Promise.resolve({
             ok: false,
-            type: "transport",
+            errorType: "transport",
             reason: "fetch-rejected",
             error: error
         }); });
@@ -49,21 +49,21 @@ function defaultProcessResponseFactory(config) {
                     else {
                         var error = {
                             ok: false,
-                            type: "response",
+                            errorType: "response",
                             error: parsed
                         };
                         return error;
                     }
                 }, function (err) { return Promise.resolve({
                     ok: false,
-                    type: "transport",
+                    errorType: "transport",
                     reason: "invalid-body",
                     statusCode: response.status,
                     error: err
                 }); });
             }, function (err) { return Promise.resolve({
                 ok: false,
-                type: "transport",
+                errorType: "transport",
                 error: err,
                 reason: "invalid-body",
                 statusCode: response.status
@@ -73,7 +73,7 @@ function defaultProcessResponseFactory(config) {
             if (response.status === 401 || response.status === 403) {
                 var errorResult = {
                     ok: false,
-                    type: "authorization",
+                    errorType: "authorization",
                     status: response.status
                 };
                 return Promise.resolve(errorResult);
@@ -81,7 +81,7 @@ function defaultProcessResponseFactory(config) {
             else {
                 var errorResult = {
                     ok: false,
-                    type: "transport",
+                    errorType: "transport",
                     error: response.statusText,
                     reason: "other",
                     statusCode: response.status

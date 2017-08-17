@@ -9,7 +9,7 @@ export interface OkResult<TResult> {
  */
 export interface ErrorResponseResult<TError> {
     ok: false;
-    type: "response";
+    errorType: "response";
     error: TError;
 }
 
@@ -18,14 +18,14 @@ export interface ErrorResponseResult<TError> {
  */
 export interface AuthorizationErrorResult {
     ok: false;
-    type: "authorization";
+    errorType: "authorization";
     status: number;
 }
 
 /** Fetch promise rejected or server returns an error other than bad request or authorization. */
 export interface TransportErrorResult {
     ok: false;
-    type: "transport";
+    errorType: "transport";
     reason: "fetch-rejected" | "invalid-body" | "other";
     statusCode?: number;
     error: any;
