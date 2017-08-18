@@ -40,7 +40,7 @@ function reduxHttpMiddleware() {
             var result = action_type_helper_1.parseActionType(action.type);
             return result.isMatch &&
                 result.requestId === requestId &&
-                (!!operation && result.operation === operation);
+                (!operation || result.operation === operation);
         }
         ;
         function isError(action) {
