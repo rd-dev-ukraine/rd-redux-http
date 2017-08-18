@@ -4,11 +4,11 @@ import "should";
 import "isomorphic-fetch";
 
 import { http } from "../src";
-import { reduxHttpMiddleware } from "../src/redux";
+import { reduxHttpMiddlewareFactory } from "../src/redux";
 
 describe("Redux integration", () => {
     it("should be fluent", () => {
-        const mw = reduxHttpMiddleware();
+        const mw = reduxHttpMiddlewareFactory();
 
 
         const createPost = mw.register(

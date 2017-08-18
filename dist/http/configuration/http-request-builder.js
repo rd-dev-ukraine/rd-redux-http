@@ -178,5 +178,8 @@ var RequestWithBodyBuilder = (function () {
     };
     return RequestWithBodyBuilder;
 }());
+/**
+ * Start configuring HTTP request from here.
+ */
 exports.http = new EntryPoint();
 //# sourceMappingURL=http-request-builder.js.map

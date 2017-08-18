@@ -83,12 +83,12 @@ interface PostValidationError {
 ``` typescript
 
 import { http } from "rd-redux-http";
-import { reduxHttpMiddleware } from "rd-redux-http/redux";
+import { reduxHttpMiddlewareFactory } from "rd-redux-http/redux";
 import { applyMiddleware, compose, createStore } from "redux";
 
 
 // Create middleware instance
-const mw = reduxHttpMiddleware();
+const mw = reduxHttpMiddlewareFactory();
 
 // Use it on store
 const store = createStore(

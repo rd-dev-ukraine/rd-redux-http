@@ -223,4 +223,7 @@ class RequestWithBodyBuilder<TBody, TParams, TResult, TError> implements HttpReq
     }
 }
 
+/**
+ * Start configuring HTTP request from here.
+ */
 export const http: HttpRequestEntryPoint = new EntryPoint();

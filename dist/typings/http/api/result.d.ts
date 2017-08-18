@@ -50,4 +50,5 @@ export interface TransportErrorResult {
      */
     error: any;
 }
+/** Union type of all possible responses. */
 export declare type HttpResult<TResult, TError> = OkResult<TResult> | ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
