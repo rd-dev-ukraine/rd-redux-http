@@ -10,7 +10,8 @@ import {
     HttpRequestConfig,
     HttpRequestWithBodyBuilder,
     HttpRequest,
-    HttpRequestWithBody
+    HttpRequestWithBody,
+    HttpResult
 } from "../api";
 
 import { createHttpRequest } from "../runtime";
@@ -121,6 +122,16 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         return this;
     }
 
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams) => Promise<HttpResult<TResult, TError>>): HttpRequestBuilder<TParams, TResult, TError> {
+        if (!processor) {
+            throw new Error("Processor function is not defined.");
+        }
+
+        this.config.processResponse = processor;
+
+        return new RequestBuilder<TParams, TResult, TError>(this.config);
+    }
+
     resultFromJson<TResult, TError>(): HttpRequestBuilder<TParams, TResult, TError> {
         return new RequestBuilder<TParams, TResult, TError>(this.config);
     }
@@ -160,6 +171,16 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
         }
         this.config.fetch = customFetch;
         return this;
+    }
+
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+        if (!processor) {
+            throw new Error("Processor function is not defined.");
+        }
+
+        this.config.processResponse = processor;
+
+        return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
     }
 
     resultFromJson<TResult, TError>(): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {

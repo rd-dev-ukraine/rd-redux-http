@@ -123,6 +123,14 @@ export interface HttpRequestConfigurator<TParams> {
      */
     withFetch(customFetch: (request: Request, params: TParams) => Promise<Response>): this;
     /**
+     * Completely replaces response processing logic.
+     * Allows to decide what to do with Response returned by fetch and when returns successfull results and when error.
+     *
+     * @param processor A function accepts Response and params and returns one of OkResult, ErrorResponseResult, AuthorizationErrorResult or TransportErrorResult.
+     * @returns An object allows to create request object.
+     */
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams) => Promise<HttpResult<TResult, TError>>): HttpRequestBuilder<TParams, TResult, TError>;
+    /**
      * Processes a response body as JSON if case of successfull response or error response with body (only 400 Bad Request processed with body by default).
      * By default response processed in following way:
      *
@@ -180,6 +188,14 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
      * @returns An object allows to configure request.
      */
     withFetch(customFetch: (request: Request, params: TParams, body: TBody) => Promise<Response>): this;
+    /**
+     * Completely replaces response processing logic.
+     * Allows to decide what to do with Response returned by fetch and when returns successfull results and when error.
+     *
+     * @param processor A function accepts Response and params and returns one of OkResult, ErrorResponseResult, AuthorizationErrorResult or TransportErrorResult.
+     * @returns An object allows to create request object.
+     */
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
     /**
      * Processes a response body as JSON if case of successfull response or error response with body (only 400 Bad Request processed with body by default).
      * By default response processed in following way:

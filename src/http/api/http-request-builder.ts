@@ -54,7 +54,7 @@ export interface HttpRequestEntryPoint {
      * @returns An object allows to continue configuring HTTP request.s
      */
     get<TParams={}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
-    
+
     /**
      * Creates POST request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
@@ -63,7 +63,7 @@ export interface HttpRequestEntryPoint {
      * @returns An object allows to continue configuring HTTP request.s
      */
     post<TParams={}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
-    
+
     /**
      * Creates PUT request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
@@ -72,7 +72,7 @@ export interface HttpRequestEntryPoint {
      * @returns An object allows to continue configuring HTTP request.s
      */
     put<TParams={}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
-    
+
     /**
      * Creates PATCH request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
@@ -81,7 +81,7 @@ export interface HttpRequestEntryPoint {
      * @returns An object allows to continue configuring HTTP request.s
      */
     patch<TParams={}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
-    
+
     /**
      * Creates DELETE request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
@@ -144,6 +144,15 @@ export interface HttpRequestConfigurator<TParams> {
     withFetch(customFetch: (request: Request, params: TParams) => Promise<Response>): this;
 
     /**
+     * Completely replaces response processing logic.
+     * Allows to decide what to do with Response returned by fetch and when returns successfull results and when error.
+     * 
+     * @param processor A function accepts Response and params and returns one of OkResult, ErrorResponseResult, AuthorizationErrorResult or TransportErrorResult.
+     * @returns An object allows to create request object.
+     */
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams) => Promise<HttpResult<TResult, TError>>): HttpRequestBuilder<TParams, TResult, TError>;        
+
+    /**
      * Processes a response body as JSON if case of successfull response or error response with body (only 400 Bad Request processed with body by default).
      * By default response processed in following way:
      * 
@@ -193,7 +202,7 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
      * 
      * @param prepareRequest A function which receives current Request and parameters and returns new request which will be used for HTTP request.
      * @returns An object allows to continue request configuration.
-     */    
+     */
     pre(prepareRequest: PrepareRequestWithBodyFunction<TBody, TParams>): this;
 
     /**
@@ -205,6 +214,16 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
      * @returns An object allows to configure request.
      */
     withFetch(customFetch: (request: Request, params: TParams, body: TBody) => Promise<Response>): this;
+
+    /**
+     * Completely replaces response processing logic.
+     * Allows to decide what to do with Response returned by fetch and when returns successfull results and when error.
+     * 
+     * @param processor A function accepts Response and params and returns one of OkResult, ErrorResponseResult, AuthorizationErrorResult or TransportErrorResult.
+     * @returns An object allows to create request object.
+     */
+    processResponse<TResult, TError>(processor: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
+
 
     /**
      * Processes a response body as JSON if case of successfull response or error response with body (only 400 Bad Request processed with body by default).
@@ -237,7 +256,7 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
      * * Otherwise fails with transport error
      * 
      */
-    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;    
+    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
 }
 
 /**

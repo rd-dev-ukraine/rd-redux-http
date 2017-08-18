@@ -95,6 +95,13 @@ var RequestConfigurator = (function () {
         this.config.fetch = customFetch;
         return this;
     };
+    RequestConfigurator.prototype.processResponse = function (processor) {
+        if (!processor) {
+            throw new Error("Processor function is not defined.");
+        }
+        this.config.processResponse = processor;
+        return new RequestBuilder(this.config);
+    };
     RequestConfigurator.prototype.resultFromJson = function () {
         return new RequestBuilder(this.config);
     };
@@ -127,6 +134,13 @@ var RequestWithBodyConfigurator = (function () {
         }
         this.config.fetch = customFetch;
         return this;
+    };
+    RequestWithBodyConfigurator.prototype.processResponse = function (processor) {
+        if (!processor) {
+            throw new Error("Processor function is not defined.");
+        }
+        this.config.processResponse = processor;
+        return new RequestWithBodyBuilder(this.config);
     };
     RequestWithBodyConfigurator.prototype.resultFromJson = function () {
         return new RequestWithBodyBuilder(this.config);
