@@ -99,6 +99,10 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         });
     }
 
+    customBody<TBody>(): HttpRequestConfiguratorWithBody<TBody, TParams> {
+        return new RequestWithBodyConfigurator<TBody, TParams>(this.config);;
+    }
+
     pre(prepareRequest: PrepareRequestFunction<TParams>): this {
         if (!prepareRequest) {
             throw new Error("Prepare request function is not defined.");
@@ -120,6 +124,17 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
     resultFromJson<TResult, TError>(): HttpRequestBuilder<TParams, TResult, TError> {
         return new RequestBuilder<TParams, TResult, TError>(this.config);
     }
+
+    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError> {
+        if (!converter) {
+            throw new Error("Coversion function is not defined.");
+        }
+
+        this.config.convertResult = converter;
+
+        return new RequestBuilder<TParams, TResult, TError>(this.config);
+    }
+
 }
 
 class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfiguratorWithBody<TBody, TParams> {
@@ -150,6 +165,17 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
     resultFromJson<TResult, TError>(): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
         return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
     }
+
+    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+        if (!converter) {
+            throw new Error("Coversion function is not defined.");
+        }
+
+        this.config.convertResult = converter;
+
+        return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
+    }
+
 }
 
 class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TParams, TResult, TError> {
