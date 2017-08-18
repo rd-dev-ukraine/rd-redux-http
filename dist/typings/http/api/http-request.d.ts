@@ -1,3 +1,4 @@
+/** Defines an interface for configured HTTP request. */
 import { HttpResult } from "./result";
 export interface HttpRequestBasicInfo {
     method: string;
@@ -5,10 +6,16 @@ export interface HttpRequestBasicInfo {
 }
 export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicInfo {
     (params: TParams): Promise<HttpResult<TResult, TError>>;
+    /**
+     * Exposes types of params, error, and result.
+     */
     types: HttpRequestTypes<TParams, TResult, TError>;
 }
 export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends HttpRequestBasicInfo {
     (params: TParams, body: TBody): Promise<HttpResult<TResult, TError>>;
+    /**
+     * Exposes types of params, error, body and result.
+     */
     types: HttpRequestWithBodyTypes<TBody, TParams, TResult, TError>;
 }
 export interface HttpRequestTypes<TParams, TResult, TError> {

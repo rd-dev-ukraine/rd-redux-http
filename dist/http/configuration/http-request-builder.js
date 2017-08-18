@@ -77,6 +77,10 @@ var RequestConfigurator = (function () {
             return new Request(request, requestInit);
         });
     };
+    RequestConfigurator.prototype.customBody = function () {
+        return new RequestWithBodyConfigurator(this.config);
+        ;
+    };
     RequestConfigurator.prototype.pre = function (prepareRequest) {
         if (!prepareRequest) {
             throw new Error("Prepare request function is not defined.");
@@ -92,6 +96,13 @@ var RequestConfigurator = (function () {
         return this;
     };
     RequestConfigurator.prototype.resultFromJson = function () {
+        return new RequestBuilder(this.config);
+    };
+    RequestConfigurator.prototype.convertResult = function (converter) {
+        if (!converter) {
+            throw new Error("Coversion function is not defined.");
+        }
+        this.config.convertResult = converter;
         return new RequestBuilder(this.config);
     };
     return RequestConfigurator;
@@ -118,6 +129,13 @@ var RequestWithBodyConfigurator = (function () {
         return this;
     };
     RequestWithBodyConfigurator.prototype.resultFromJson = function () {
+        return new RequestWithBodyBuilder(this.config);
+    };
+    RequestWithBodyConfigurator.prototype.convertResult = function (converter) {
+        if (!converter) {
+            throw new Error("Coversion function is not defined.");
+        }
+        this.config.convertResult = converter;
         return new RequestWithBodyBuilder(this.config);
     };
     return RequestWithBodyConfigurator;
