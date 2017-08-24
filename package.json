@@ -16,8 +16,6 @@
   "license": "ISC",
   "types": "dist/typings/index.d.ts",
   "dependencies": {
-    "isomorphic-fetch": "^2.2.1",
-    "redux": "^3.6.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -28,11 +26,10 @@
     "mocha": "^3.5.0",
     "should": "^11.2.1",
     "ts-node": "^3.3.0",
-    "tslint": "^4.5.1",
-    "tslint-loader": "^3.5.3",
     "typescript": "^2.4.1"
   },
   "peerDependencies": {
+    "isomorphic-fetch": "^2.2.1",
     "@types/redux": "^3.6.0",
     "redux": "^3.7.2"
   }
