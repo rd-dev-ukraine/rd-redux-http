@@ -1,6 +1,6 @@
 {
   "name": "rd-redux-http",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "description": "HTTP Network requests integrated with Redux",
   "main": "dist/index.js",
@@ -16,6 +16,9 @@
   "license": "ISC",
   "types": "dist/typings/index.d.ts",
   "dependencies": {
+    "@types/redux": "^3.6.0",
+    "isomorphic-fetch": "^2.2.1",
+    "redux": "^3.7.2",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
