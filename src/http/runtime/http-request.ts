@@ -9,6 +9,7 @@ import {
     HttpRequestConfig
 } from "../api";
 
+import { createLifecycleActions } from "./lifecycle-actions";
 import { urlFromParams } from "./url-builder";
 
 
@@ -36,6 +37,7 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
 
     }) as any as HttpRequestWithBody<TBody, TParams, TResult, TError>;
 
+    result.lifecycleActions = createLifecycleActions(config.method, config.urlTemplate);
     result.types = new HttpTypes<TBody, TParams, TResult, TError>();
     result.method = config.method;
     result.urlTemplate = config.urlTemplate;

@@ -1,5 +1,6 @@
 /** Defines an interface for configured HTTP request. */
 import { HttpResult } from "./result";
+import { LifecycleActions } from "./lifecycle-actions";
 export interface HttpRequestBasicInfo {
     /** HTTP method (verb) of the request. */
     method: string;
@@ -23,6 +24,8 @@ export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicI
      * Use it as const result: typeof myRequest.types.result = ...
      */
     types: HttpRequestTypes<TParams, TResult, TError>;
+    /** Factory and type guards for redux actions can be used for indicating request lifecycle events. */
+    lifecycleActions: LifecycleActions<TParams, TResult, TError>;
 }
 /**
  * Allows to run configured HTTP request.
@@ -42,6 +45,8 @@ export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends Ht
      * Use it as const result: typeof myRequest.types.result = ...
      */
     types: HttpRequestWithBodyTypes<TBody, TParams, TResult, TError>;
+    /** Factory and type guards for redux actions can be used for indicating request lifecycle events. */
+    lifecycleActions: LifecycleActions<TParams, TResult, TError>;
 }
 /**
  * Exposes properties which have types related to the request: params, result, errors etc.
