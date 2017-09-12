@@ -14,20 +14,23 @@ import {
     TransportErrorResult,
     AuthorizationErrorResultAction,
     TransportErrorResultAction,
-    RunRequestActionFactory,
-    RunRequestWithBodyActionFactory,
-    RunRequestAction,
-    RunRequestWithBodyAction
+    MakeRequestActionFactory,
+    MakeRequestWithBodyActionFactory,
+    MakeRequestAction,
+    MakeRequestWithBodyAction
 } from "../api";
 
 import { formatActionType, parseActionType, MatchActionInfo, OperationType } from "./action-type-helper";
 
 
-export function createActions<TParams, TResult, TError, TBody=undefined>(id: string, method: string, url: string): ActionFactory<TParams, TResult, TError> & RunRequestActionFactory<TParams> & RunRequestWithBodyActionFactory<TParams, TBody> {
+export function createActions<TParams, TResult, TError, TBody=undefined>(id: string, method: string, url: string): ActionFactory<TParams, TResult, TError> & MakeRequestActionFactory<TParams> & MakeRequestWithBodyActionFactory<TParams, TBody> {
     return new ActionFactoryImpl(id, method, url);
 }
 
-class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements ActionFactory<TParams, TResult, TError>, RunRequestActionFactory<TParams>, RunRequestWithBodyActionFactory<TParams, TBody> {
+class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
+    ActionFactory<TParams, TResult, TError>,
+    MakeRequestActionFactory<TParams>,
+    MakeRequestWithBodyActionFactory<TParams, TBody> {
 
     types: ActionTypes<TParams, TResult, TError> = {
         get params(): TParams { throw new Error("Use this with Typescript typeof operator only"); },
@@ -113,27 +116,27 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements 
         };
     }
 
-    run(params: TParams): RunRequestAction<TParams>;
-    run(params: TParams, body: TBody): RunRequestWithBodyAction<TParams, TBody>;
-    run(params: TParams, body?: any): any {
+    request(params: TParams): MakeRequestAction<TParams>;
+    request(params: TParams, body: TBody): MakeRequestWithBodyAction<TParams, TBody>;
+    request(params: TParams, body?: any): any {
         if (body) {
             return {
-                type: this.actionType("run"),
+                type: this.actionType("request"),
                 params,
                 body
             };
         } else {
             return {
-                type: this.actionType("run"),
+                type: this.actionType("request"),
                 params
             } as any;
         }
     }
 
-    isRun(action?: Action): action is RunRequestWithBodyAction<TParams, TBody>;
-    isRun(action?: Action): action is RunRequestAction<TParams> {
+    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
+    isRequesting(action?: Action): action is MakeRequestAction<TParams> {
         const match = this.match(action);
-        return match.isMatch && match.operation === "run";
+        return match.isMatch && match.operation === "request";
     }
 
     protected match(action?: Action): MatchActionInfo | { isMatch: false } {

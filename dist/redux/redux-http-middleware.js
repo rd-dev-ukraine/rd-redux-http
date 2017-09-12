@@ -10,7 +10,7 @@ function reduxHttpMiddlewareFactory() {
     var registry = new request_registry_1.RequestRegistry();
     var mw = (function (store) { return function (dispatch) { return function (action) {
         var parsedAction = action_type_helper_1.parseActionType(action.type);
-        if (parsedAction.isMatch && parsedAction.operation === "run") {
+        if (parsedAction.isMatch && parsedAction.operation === "request") {
             var request_1 = registry.take(parsedAction.requestId);
             var typedAction_1 = action;
             if (request_1) {
@@ -32,8 +32,8 @@ function reduxHttpMiddlewareFactory() {
         }
         registry.register(request);
         var requestTyped = request;
-        request.run = function (params, body) { return requestTyped.actions.run(params, body); };
-        request.isRun = function (action) { return requestTyped.actions.isRun(action); };
+        request.request = function (params, body) { return requestTyped.actions.request(params, body); };
+        request.isRequesting = function (action) { return requestTyped.actions.isRequesting(action); };
         return request;
     };
     return mw;

@@ -73,24 +73,24 @@ var ActionFactoryImpl = (function () {
     ActionFactoryImpl.prototype.error = function (params, error) {
         return __assign({ type: this.actionType("error"), params: params }, error);
     };
-    ActionFactoryImpl.prototype.run = function (params, body) {
+    ActionFactoryImpl.prototype.request = function (params, body) {
         if (body) {
             return {
-                type: this.actionType("run"),
+                type: this.actionType("request"),
                 params: params,
                 body: body
             };
         }
         else {
             return {
-                type: this.actionType("run"),
+                type: this.actionType("request"),
                 params: params
             };
         }
     };
-    ActionFactoryImpl.prototype.isRun = function (action) {
+    ActionFactoryImpl.prototype.isRequesting = function (action) {
         var match = this.match(action);
-        return match.isMatch && match.operation === "run";
+        return match.isMatch && match.operation === "request";
     };
     ActionFactoryImpl.prototype.match = function (action) {
         if (!action) {

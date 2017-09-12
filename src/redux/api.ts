@@ -1,44 +1,27 @@
-import { Action, Middleware } from "redux";
+import { Middleware } from "redux";
 
 
 import {
     HttpRequest,
     HttpRequestWithBody,
-    RunRequestAction,
-    RunRequestWithBodyAction
+    MakeRequestActionFactory,
+    MakeRequestWithBodyActionFactory
 } from "../http";
 
 /**
  * HTTP request augmented for redux integration.
  */
-export interface ReduxHttpRequest<TParams, TResult, TError={}> extends HttpRequest<TParams, TResult, TError> {
-    /**
-     * Creates an action for running request with parameters.
-     * To actually run the request dispatch created action.
-     */
-    run(params: TParams): RunRequestAction<TParams>;
-
-    /**
-     * True if action initiating execution of this request.
-     */
-    isRun(action?: Action): action is RunRequestAction<TParams>;
-
+export interface ReduxHttpRequest<TParams, TResult, TError={}> extends
+    HttpRequest<TParams, TResult, TError>,
+    MakeRequestActionFactory<TParams> {
 }
 
 /**
  * HTTP request with body augmented for redux integration.
  */
-export interface ReduxHttpRequestWithBody<TBody, TParams, TResult, TError> extends HttpRequestWithBody<TBody, TParams, TResult, TError> {
-    /**
-     * Creates an action for running request with parameters and body.
-     * To actually run the request dispatch created action.
-     */
-    run(params: TParams, body: TBody): RunRequestWithBodyAction<TBody, TParams>;
-
-    /**
-     * True if action initiating execution of this request.
-     */
-    isRun(action?: Action): action is RunRequestWithBodyAction<TBody, TParams>;
+export interface ReduxHttpRequestWithBody<TBody, TParams, TResult, TError> extends
+    HttpRequestWithBody<TBody, TParams, TResult, TError>,
+    MakeRequestWithBodyActionFactory<TParams, TBody> {
 }
 
 /**

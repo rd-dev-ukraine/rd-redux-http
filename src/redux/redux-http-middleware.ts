@@ -1,6 +1,6 @@
 import { MiddlewareAPI, Dispatch, Action } from "redux";
 
-import { HttpRequestWithBody, RunRequestWithBodyAction } from "../http";
+import { HttpRequestWithBody, MakeRequestWithBodyAction } from "../http";
 import { parseActionType } from "../http/runtime/action-type-helper";
 
 import { ReduxHttpMiddleware } from "./api";
@@ -17,9 +17,9 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
         (store: MiddlewareAPI<any>) => (dispatch: Dispatch<any>) => (action: Action): any => {
 
             const parsedAction = parseActionType(action.type);
-            if (parsedAction.isMatch && parsedAction.operation === "run") {
+            if (parsedAction.isMatch && parsedAction.operation === "request") {
                 const request = registry.take(parsedAction.requestId) as HttpRequestWithBody<any, any, any, any>;
-                const typedAction = action as RunRequestWithBodyAction<any, any>;
+                const typedAction = action as MakeRequestWithBodyAction<any, any>;
 
                 if (request) {
                     store.dispatch(request.actions.running(typedAction.params));
@@ -49,8 +49,8 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
         registry.register(request);
         const requestTyped = request as HttpRequestWithBody<any, any, any, any>;
 
-        request.run = (params: any, body?: any): any => requestTyped.actions.run(params, body);
-        request.isRun = (action?: Action): any => requestTyped.actions.isRun(action);
+        request.request = (params: any, body?: any): any => requestTyped.actions.request(params, body);
+        request.isRequesting = (action?: Action): any => requestTyped.actions.isRequesting(action);
 
         return request as any;
     };
