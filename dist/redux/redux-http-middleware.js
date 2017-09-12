@@ -8,7 +8,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var action_type_helper_1 = require("./action-type-helper");
+var action_type_helper_1 = require("../http/runtime/action-type-helper");
 var request_registry_1 = require("./request-registry");
 /**
  * Factory for creating middlewares for rd-redux-http integration with redux.
@@ -18,13 +18,13 @@ function reduxHttpMiddlewareFactory() {
     var registry = new request_registry_1.RequestRegistry();
     var mw = (function (store) { return function (dispatch) { return function (action) {
         var parsedAction = action_type_helper_1.parseActionType(action.type);
-        if (parsedAction.isMatch && parsedAction.operation === "run") {
+        if (parsedAction.isMatch && parsedAction.operation === "running") {
             var request_1 = registry.take(parsedAction.requestId);
             var typedAction_1 = action;
             if (request_1) {
                 request_1(typedAction_1.params, typedAction_1.body)
                     .then(function (result) {
-                    var resultAction = __assign({}, result, { type: action_type_helper_1.formatActionType(parsedAction.requestId, result.ok ? "result" : "error", request_1.method, request_1.urlTemplate), params: typedAction_1.params });
+                    var resultAction = __assign({}, result, { type: action_type_helper_1.formatActionType(parsedAction.requestId, result.ok ? "ok" : "error", request_1.method, request_1.urlTemplate), params: typedAction_1.params });
                     store.dispatch(resultAction);
                 });
             }
@@ -35,7 +35,7 @@ function reduxHttpMiddlewareFactory() {
         if (!request) {
             throw new Error("HttpRequest object is not defined.");
         }
-        var requestId = registry.register(request);
+        var requestId = registry.take(request);
         var requestTyped = request;
         function testRequestAction(action, operation) {
             if (!action) {
@@ -46,7 +46,6 @@ function reduxHttpMiddlewareFactory() {
                 result.requestId === requestId &&
                 (!operation || result.operation === operation);
         }
-        ;
         function isError(action) {
             return testRequestAction(action, "error");
         }
@@ -54,14 +53,14 @@ function reduxHttpMiddlewareFactory() {
             return action_type_helper_1.formatActionType(requestId, operation, requestTyped.method, requestTyped.urlTemplate);
         }
         request.isMy = function (action) { return testRequestAction(action); };
-        request.isRunning = function (action) { return testRequestAction(action, "run"); };
-        request.isOk = function (action) { return testRequestAction(action, "result"); };
+        request.isRunning = function (action) { return testRequestAction(action, "running"); };
+        request.isOk = function (action) { return testRequestAction(action, "ok"); };
         request.isError = isError;
         request.isErrorResponse = function (action) { return isError(action) && action.errorType === "response"; };
         request.isAuthorizationError = function (action) { return isError(action) && action.errorType === "authorization"; };
         request.isTransportError = function (action) { return isError(action) && action.errorType === "transport"; };
         request.run = function (params, body) { return ({
-            type: makeActionType("run"),
+            type: makeActionType("running"),
             params: params,
             body: body
         }); };

@@ -42,10 +42,8 @@ export interface ReduxHttpLifecycleActionBase<TParams> extends Action {
 export interface RequestRunningAction<TParams> extends ReduxHttpLifecycleActionBase<TParams> {
 }
 export interface RequestOkAction<TParams, TResult> extends ReduxHttpLifecycleActionBase<TParams> {
-    ok: true;
     result: TResult;
 }
 export interface RequestErrorAction<TParams, TError> extends ReduxHttpLifecycleActionBase<TParams> {
-    ok: false;
     error: TError;
 }

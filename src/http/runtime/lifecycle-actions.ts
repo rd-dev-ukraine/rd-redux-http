@@ -72,16 +72,14 @@ class LifecycleActionsImpl<TParams, TResult, TError> implements LifecycleActions
     }
     ok(params: TParams, result: TResult): RequestOkAction<TParams, TResult> {
         return {
+            ...result as any,
             type: this.actionType("ok"),
-            ok: true,
             params,
-            result
         };
     }
     error(params: TParams, error: TError): RequestErrorAction<TParams, TError> {
         return {
             type: this.actionType("error"),
-            ok: false,
             params,
             error
         };

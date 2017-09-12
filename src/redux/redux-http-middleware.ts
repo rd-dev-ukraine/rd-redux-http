@@ -2,7 +2,7 @@ import { MiddlewareAPI, Dispatch, Action } from "redux";
 
 import { HttpRequest, HttpRequestWithBody } from "../http";
 
-import { parseActionType, OperationType, formatActionType } from "./action-type-helper";
+import { parseActionType, OperationType, formatActionType } from "../http/runtime/action-type-helper";
 import { ErrorAction, RunHttpRequestWithBodyAction, ReduxHttpMiddleware } from "./api";
 import { RequestRegistry } from "./request-registry";
 
@@ -17,7 +17,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
         (store: MiddlewareAPI<any>) => (dispatch: Dispatch<any>) => (action: Action): any => {
             const parsedAction = parseActionType(action.type);
 
-            if (parsedAction.isMatch && parsedAction.operation === "run") {
+            if (parsedAction.isMatch && parsedAction.operation === "running") {
                 const request = registry.take(parsedAction.requestId) as HttpRequestWithBody<any, any, any, any>;
                 const typedAction = action as RunHttpRequestWithBodyAction<any, any>;
 
@@ -28,11 +28,11 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
                                 ...result,
                                 type: formatActionType(
                                     parsedAction.requestId,
-                                    result.ok ? "result" : "error",
+                                    result.ok ? "ok" : "error",
                                     request.method,
                                     request.urlTemplate
                                 ),
-                                params: typedAction.params
+                                params: typedAction.params,
                             };
 
                             store.dispatch(resultAction);
@@ -50,7 +50,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
             throw new Error("HttpRequest object is not defined.");
         }
 
-        const requestId = registry.register(request);
+        const requestId = registry.take(request);
         const requestTyped = request as HttpRequest<any, any, any>;
 
         function testRequestAction(action?: Action, operation?: OperationType): boolean {
@@ -62,7 +62,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
             return result.isMatch &&
                 result.requestId === requestId &&
                 (!operation || result.operation === operation);
-        };
+        }
 
         function isError(action?: Action): action is ErrorAction<any, any> {
             return testRequestAction(action, "error");
@@ -74,8 +74,8 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
 
         request.isMy = (action?: Action) => testRequestAction(action);
 
-        request.isRunning = (action?: Action) => testRequestAction(action, "run");
-        request.isOk = (action?: Action) => testRequestAction(action, "result");
+        request.isRunning = (action?: Action) => testRequestAction(action, "running");
+        request.isOk = (action?: Action) => testRequestAction(action, "ok");
         request.isError = isError;
 
         request.isErrorResponse = (action?: Action): boolean => isError(action) && action.errorType === "response";
@@ -83,7 +83,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
         request.isTransportError = (action?: Action): boolean => isError(action) && action.errorType === "transport";
 
         request.run = (params: any, body?: any): any => ({
-            type: makeActionType("run"),
+            type: makeActionType("running"),
             params,
             body
         });
