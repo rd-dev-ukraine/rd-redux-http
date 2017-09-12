@@ -1,9 +1,9 @@
 import { MiddlewareAPI, Dispatch, Action } from "redux";
 
-import { HttpRequest, HttpRequestWithBody } from "../http";
+import { HttpRequestWithBody, RunRequestWithBodyAction } from "../http";
+import { parseActionType } from "../http/runtime/action-type-helper";
 
-import { parseActionType, OperationType, formatActionType } from "../http/runtime/action-type-helper";
-import { ErrorAction, RunHttpRequestWithBodyAction, ReduxHttpMiddleware } from "./api";
+import { ReduxHttpMiddleware } from "./api";
 import { RequestRegistry } from "./request-registry";
 
 /**
@@ -15,25 +15,21 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
 
     const mw: ReduxHttpMiddleware = (
         (store: MiddlewareAPI<any>) => (dispatch: Dispatch<any>) => (action: Action): any => {
-            const parsedAction = parseActionType(action.type);
 
-            if (parsedAction.isMatch && parsedAction.operation === "running") {
+            const parsedAction = parseActionType(action.type);
+            if (parsedAction.isMatch && parsedAction.operation === "run") {
                 const request = registry.take(parsedAction.requestId) as HttpRequestWithBody<any, any, any, any>;
-                const typedAction = action as RunHttpRequestWithBodyAction<any, any>;
+                const typedAction = action as RunRequestWithBodyAction<any, any>;
 
                 if (request) {
+                    store.dispatch(request.actions.running(typedAction.params));
+
                     request(typedAction.params, typedAction.body)
                         .then(result => {
-                            const resultAction = {
-                                ...result,
-                                type: formatActionType(
-                                    parsedAction.requestId,
-                                    result.ok ? "ok" : "error",
-                                    request.method,
-                                    request.urlTemplate
-                                ),
-                                params: typedAction.params,
-                            };
+
+                            const resultAction = result.ok
+                                ? request.actions.ok(typedAction.params, result)
+                                : request.actions.error(typedAction.params, result);
 
                             store.dispatch(resultAction);
                         });
@@ -50,43 +46,11 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
             throw new Error("HttpRequest object is not defined.");
         }
 
-        const requestId = registry.take(request);
-        const requestTyped = request as HttpRequest<any, any, any>;
+        registry.register(request);
+        const requestTyped = request as HttpRequestWithBody<any, any, any, any>;
 
-        function testRequestAction(action?: Action, operation?: OperationType): boolean {
-            if (!action) {
-                return false;
-            }
-
-            const result = parseActionType(action.type);
-            return result.isMatch &&
-                result.requestId === requestId &&
-                (!operation || result.operation === operation);
-        }
-
-        function isError(action?: Action): action is ErrorAction<any, any> {
-            return testRequestAction(action, "error");
-        }
-
-        function makeActionType(operation: OperationType): string {
-            return formatActionType(requestId, operation, requestTyped.method, requestTyped.urlTemplate);
-        }
-
-        request.isMy = (action?: Action) => testRequestAction(action);
-
-        request.isRunning = (action?: Action) => testRequestAction(action, "running");
-        request.isOk = (action?: Action) => testRequestAction(action, "ok");
-        request.isError = isError;
-
-        request.isErrorResponse = (action?: Action): boolean => isError(action) && action.errorType === "response";
-        request.isAuthorizationError = (action?: Action): boolean => isError(action) && action.errorType === "authorization";
-        request.isTransportError = (action?: Action): boolean => isError(action) && action.errorType === "transport";
-
-        request.run = (params: any, body?: any): any => ({
-            type: makeActionType("running"),
-            params,
-            body
-        });
+        request.run = (params: any, body?: any): any => requestTyped.actions.run(params, body);
+        request.isRun = (action?: Action): any => requestTyped.actions.isRun(action);
 
         return request as any;
     };

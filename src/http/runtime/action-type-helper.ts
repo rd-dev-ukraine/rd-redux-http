@@ -1,4 +1,4 @@
-export type OperationType = "running" | "ok" | "error";
+export type OperationType = "run" | "running" | "ok" | "error";
 
 export interface MatchActionInfo {
     isMatch: true;
@@ -8,7 +8,7 @@ export interface MatchActionInfo {
 
 const NoMatch: { isMatch: false } = { isMatch: false };
 
-const matchActionRegex = /^RD-REDUX-HTTP-LIFECYCLE \[(\d+)] (\w+)/i;
+const matchActionRegex = /^RD-REDUX-HTTP \[(\d+)] (\w+)/i;
 
 export function parseActionType(actionType: string): MatchActionInfo | { isMatch: false } {
     if (!actionType) {
@@ -28,5 +28,5 @@ export function parseActionType(actionType: string): MatchActionInfo | { isMatch
 }
 
 export function formatActionType(requestId: string, operation: OperationType, method: string, urlTemplate: string): string {
-    return `RD-REDUX-HTTP-LIFECYCLE [${requestId}] ${operation.toUpperCase()} ${method.toUpperCase()} ${urlTemplate}`;
+    return `RD-REDUX-HTTP [${requestId}] ${operation.toUpperCase()} ${method.toUpperCase()} ${urlTemplate}`;
 }

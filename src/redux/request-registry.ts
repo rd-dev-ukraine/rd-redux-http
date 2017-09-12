@@ -2,18 +2,14 @@ import { HttpRequest } from "../http";
 
 export class RequestRegistry {
     private map: any = {};
-    private lastRequestId = 0;
 
-    register(request: HttpRequest<any, any, any>): string {
+    register(request: HttpRequest<any, any, any>): void {
         if (!request) {
             throw new Error("Http Request object is not defined.");
         }
 
-        this.lastRequestId++;
 
-        this.map[this.lastRequestId] = request;
-
-        return `${this.lastRequestId}`;
+        this.map[request.id] = request;
     }
 
     take(requestId: string): any {

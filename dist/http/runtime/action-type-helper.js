@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var NoMatch = { isMatch: false };
-var matchActionRegex = /^RD-REDUX-HTTP-LIFECYCLE \[(\d+)] (\w+)/i;
+var matchActionRegex = /^RD-REDUX-HTTP \[(\d+)] (\w+)/i;
 function parseActionType(actionType) {
     if (!actionType) {
         return NoMatch;
@@ -18,7 +18,7 @@ function parseActionType(actionType) {
 }
 exports.parseActionType = parseActionType;
 function formatActionType(requestId, operation, method, urlTemplate) {
-    return "RD-REDUX-HTTP-LIFECYCLE [" + requestId + "] " + operation.toUpperCase() + " " + method.toUpperCase() + " " + urlTemplate;
+    return "RD-REDUX-HTTP [" + requestId + "] " + operation.toUpperCase() + " " + method.toUpperCase() + " " + urlTemplate;
 }
 exports.formatActionType = formatActionType;
 //# sourceMappingURL=action-type-helper.js.map

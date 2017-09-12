@@ -1,12 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_type_helper_1 = require("../http/runtime/action-type-helper");
 var request_registry_1 = require("./request-registry");
@@ -18,13 +10,16 @@ function reduxHttpMiddlewareFactory() {
     var registry = new request_registry_1.RequestRegistry();
     var mw = (function (store) { return function (dispatch) { return function (action) {
         var parsedAction = action_type_helper_1.parseActionType(action.type);
-        if (parsedAction.isMatch && parsedAction.operation === "running") {
+        if (parsedAction.isMatch && parsedAction.operation === "run") {
             var request_1 = registry.take(parsedAction.requestId);
             var typedAction_1 = action;
             if (request_1) {
+                store.dispatch(request_1.actions.running(typedAction_1.params));
                 request_1(typedAction_1.params, typedAction_1.body)
                     .then(function (result) {
-                    var resultAction = __assign({}, result, { type: action_type_helper_1.formatActionType(parsedAction.requestId, result.ok ? "ok" : "error", request_1.method, request_1.urlTemplate), params: typedAction_1.params });
+                    var resultAction = result.ok
+                        ? request_1.actions.ok(typedAction_1.params, result)
+                        : request_1.actions.error(typedAction_1.params, result);
                     store.dispatch(resultAction);
                 });
             }
@@ -35,35 +30,10 @@ function reduxHttpMiddlewareFactory() {
         if (!request) {
             throw new Error("HttpRequest object is not defined.");
         }
-        var requestId = registry.take(request);
+        registry.register(request);
         var requestTyped = request;
-        function testRequestAction(action, operation) {
-            if (!action) {
-                return false;
-            }
-            var result = action_type_helper_1.parseActionType(action.type);
-            return result.isMatch &&
-                result.requestId === requestId &&
-                (!operation || result.operation === operation);
-        }
-        function isError(action) {
-            return testRequestAction(action, "error");
-        }
-        function makeActionType(operation) {
-            return action_type_helper_1.formatActionType(requestId, operation, requestTyped.method, requestTyped.urlTemplate);
-        }
-        request.isMy = function (action) { return testRequestAction(action); };
-        request.isRunning = function (action) { return testRequestAction(action, "running"); };
-        request.isOk = function (action) { return testRequestAction(action, "ok"); };
-        request.isError = isError;
-        request.isErrorResponse = function (action) { return isError(action) && action.errorType === "response"; };
-        request.isAuthorizationError = function (action) { return isError(action) && action.errorType === "authorization"; };
-        request.isTransportError = function (action) { return isError(action) && action.errorType === "transport"; };
-        request.run = function (params, body) { return ({
-            type: makeActionType("running"),
-            params: params,
-            body: body
-        }); };
+        request.run = function (params, body) { return requestTyped.actions.run(params, body); };
+        request.isRun = function (action) { return requestTyped.actions.isRun(action); };
         return request;
     };
     return mw;

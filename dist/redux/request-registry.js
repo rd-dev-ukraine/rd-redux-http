@@ -3,15 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var RequestRegistry = (function () {
     function RequestRegistry() {
         this.map = {};
-        this.lastRequestId = 0;
     }
     RequestRegistry.prototype.register = function (request) {
         if (!request) {
             throw new Error("Http Request object is not defined.");
         }
-        this.lastRequestId++;
-        this.map[this.lastRequestId] = request;
-        return "" + this.lastRequestId;
+        this.map[request.id] = request;
     };
     RequestRegistry.prototype.take = function (requestId) {
         if (!requestId) {

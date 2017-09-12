@@ -1,7 +1,6 @@
 import { HttpRequest } from "../http";
 export declare class RequestRegistry {
     private map;
-    private lastRequestId;
-    register(request: HttpRequest<any, any, any>): string;
+    register(request: HttpRequest<any, any, any>): void;
     take(requestId: string): any;
 }

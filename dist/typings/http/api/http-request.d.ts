@@ -1,11 +1,13 @@
 /** Defines an interface for configured HTTP request. */
 import { HttpResult } from "./result";
-import { LifecycleActions } from "./lifecycle-actions";
+import { ActionFactory, RunRequestActionFactory, RunRequestWithBodyActionFactory } from "./actions";
 export interface HttpRequestBasicInfo {
     /** HTTP method (verb) of the request. */
     method: string;
     /** URL template for the request. */
     urlTemplate: string;
+    /** Unique request identifier. */
+    id: string;
 }
 /**
  * Allows to run configured HTTP request.
@@ -25,7 +27,7 @@ export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicI
      */
     types: HttpRequestTypes<TParams, TResult, TError>;
     /** Factory and type guards for redux actions can be used for indicating request lifecycle events. */
-    lifecycleActions: LifecycleActions<TParams, TResult, TError>;
+    actions: ActionFactory<TParams, TResult, TError> & RunRequestActionFactory<TParams>;
 }
 /**
  * Allows to run configured HTTP request.
@@ -46,7 +48,7 @@ export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends Ht
      */
     types: HttpRequestWithBodyTypes<TBody, TParams, TResult, TError>;
     /** Factory and type guards for redux actions can be used for indicating request lifecycle events. */
-    lifecycleActions: LifecycleActions<TParams, TResult, TError>;
+    actions: ActionFactory<TParams, TResult, TError> & RunRequestWithBodyActionFactory<TParams, TBody>;
 }
 /**
  * Exposes properties which have types related to the request: params, result, errors etc.

@@ -1,4 +1,4 @@
-export declare type OperationType = "running" | "ok" | "error";
+export declare type OperationType = "run" | "running" | "ok" | "error";
 export interface MatchActionInfo {
     isMatch: true;
     requestId: string;

@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var lifecycle_actions_1 = require("./lifecycle-actions");
+var actions_1 = require("./actions");
 var url_builder_1 = require("./url-builder");
+var counter = 1;
 function createHttpRequest(config) {
     var result = (function (params, body) {
         var url = url_builder_1.urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
@@ -17,7 +18,8 @@ function createHttpRequest(config) {
             error: error
         }); });
     });
-    result.lifecycleActions = lifecycle_actions_1.createLifecycleActions(config.method, config.urlTemplate);
+    result.id = "" + counter++;
+    result.actions = actions_1.createActions(result.id, config.method, config.urlTemplate);
     result.types = new HttpTypes();
     result.method = config.method;
     result.urlTemplate = config.urlTemplate;
