@@ -17,46 +17,46 @@ describe("Lifecycle actions", () => {
     describe("isMy action", () => {
         it("should be correct for running", () => {
 
-            getPostById.lifecycleActions.isMy(
-                getPostById.lifecycleActions.running({ postId: 1 })
+            getPostById.actions.isMy(
+                getPostById.actions.running({ postId: 1 })
             ).should.be.true();
 
-            getPostById.lifecycleActions.isMy(
-                getPostById2.lifecycleActions.running({ postId: 1 })
+            getPostById.actions.isMy(
+                getPostById2.actions.running({ postId: 1 })
             ).should.be.false();
 
-            getPostById2.lifecycleActions.isMy(
-                getPostById.lifecycleActions.running({ postId: 1 })
+            getPostById2.actions.isMy(
+                getPostById.actions.running({ postId: 1 })
             ).should.be.false();
         });
 
         it("should be correct for ok", () => {
 
-            getPostById.lifecycleActions.isMy(
-                getPostById.lifecycleActions.ok({ postId: 1 }, post)
+            getPostById.actions.isMy(
+                getPostById.actions.ok({ postId: 1 }, { ok: true, result: post })
             ).should.be.true();
 
-            getPostById.lifecycleActions.isMy(
-                getPostById2.lifecycleActions.ok({ postId: 1 }, post)
+            getPostById.actions.isMy(
+                getPostById2.actions.ok({ postId: 1 }, { ok: true, result: post })
             ).should.be.false();
 
-            getPostById2.lifecycleActions.isMy(
-                getPostById.lifecycleActions.ok({ postId: 1 }, post)
+            getPostById2.actions.isMy(
+                getPostById.actions.ok({ postId: 1 }, { ok: true, result: post })
             ).should.be.false();
         });
 
         it("should be correct for error", () => {
 
-            getPostById.lifecycleActions.isMy(
-                getPostById.lifecycleActions.error({ postId: 1 }, "Error")
+            getPostById.actions.isMy(
+                getPostById.actions.error({ postId: 1 }, { ok: false, errorType: "response", error: "Error" })
             ).should.be.true();
 
-            getPostById.lifecycleActions.isMy(
-                getPostById2.lifecycleActions.error({ postId: 1 }, "Error")
+            getPostById.actions.isMy(
+                getPostById2.actions.error({ postId: 1 }, { ok: false, errorType: "response", error: "Error" })
             ).should.be.false();
 
-            getPostById2.lifecycleActions.isMy(
-                getPostById.lifecycleActions.error({ postId: 1 }, "error")
+            getPostById2.actions.isMy(
+                getPostById.actions.error({ postId: 1 }, { ok: false, errorType: "response", error: "Error" })
             ).should.be.false();
         });
     });
@@ -64,24 +64,24 @@ describe("Lifecycle actions", () => {
     describe("isRunning", () => {
 
         it("should be true for own running action", () => {
-            getPostById.lifecycleActions.isRunning(
-                getPostById.lifecycleActions.running({ postId: 1 })
+            getPostById.actions.isRunning(
+                getPostById.actions.running({ postId: 1 })
             ).should.be.true();
         });
 
         it("should be false for foreign running action", () => {
-            getPostById.lifecycleActions.isRunning(
-                getPostById2.lifecycleActions.running({ postId: 1 })
+            getPostById.actions.isRunning(
+                getPostById2.actions.running({ postId: 1 })
             ).should.be.false();
         });
 
         it("should be false for own other action", () => {
-            getPostById.lifecycleActions.isRunning(
-                getPostById.lifecycleActions.ok({ postId: 1 }, post)
+            getPostById.actions.isRunning(
+                getPostById.actions.ok({ postId: 1 }, { ok: true, result: post })
             ).should.be.false();
 
-            getPostById.lifecycleActions.isRunning(
-                getPostById.lifecycleActions.error({ postId: 1 }, "Error")
+            getPostById.actions.isRunning(
+                getPostById.actions.error({ postId: 1 }, { ok: false, errorType: "response", error: "Error" })
             ).should.be.false();
         });
     });

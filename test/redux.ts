@@ -26,23 +26,23 @@ describe("Redux integration", () => {
             body: "body"
         };
 
-        const action = createPost.run(
+        const action = createPost.request(
             { postId: 1 },
             post);
 
         action.should.be.eql({
-            type: "RD-REDUX-HTTP [1] run PUT https://jsonplaceholder.typicode.com/posts/:postId",
+            type: `RD-REDUX-HTTP [${createPost.id}] REQUEST PUT https://jsonplaceholder.typicode.com/posts/:postId`,
             params: { postId: 1 },
             body: post
         });
 
-        createPost.isRunning(action).should.be.true();
-        createPost.isMy(action).should.be.true();
-        createPost.isOk(action).should.be.false();
-        createPost.isError(action).should.be.false();
-        createPost.isErrorResponse(action).should.be.false();
-        createPost.isAuthorizationError(action).should.be.false();
-        createPost.isTransportError(action).should.be.false();
+        createPost.isRequesting(action).should.be.true();
+        createPost.actions.isMy(action).should.be.true();
+        createPost.actions.isOk(action).should.be.false();
+        createPost.actions.isError(action).should.be.false();
+        createPost.actions.isErrorResponse(action).should.be.false();
+        createPost.actions.isAuthorizationError(action).should.be.false();
+        createPost.actions.isTransportError(action).should.be.false();
     });
 });
 
