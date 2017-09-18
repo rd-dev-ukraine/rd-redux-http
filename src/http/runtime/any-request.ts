@@ -29,8 +29,8 @@ class AnyActionTypeGuardsImpl<TParams, TResult, TError, TBody=undefined> impleme
 
         const match = parseActionType(action.type);
         return match.isMatch;
-
     }
+
     isRunning(action?: Action | undefined): action is RequestRunningAction<TParams> {
         if (!action) {
             return false;
@@ -78,11 +78,9 @@ class AnyActionTypeGuardsImpl<TParams, TResult, TError, TBody=undefined> impleme
     isRequesting(action?: Action): action is MakeRequestAction<TParams> {
         if (!action) {
             return false;
-
         }
 
         const match = parseActionType(action.type);
-
         return match.isMatch && match.operation === "request";
     }
 }
