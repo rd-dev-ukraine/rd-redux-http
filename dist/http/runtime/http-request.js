@@ -103,12 +103,12 @@ var HttpTypes = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(HttpTypes.prototype, "result", {
+    Object.defineProperty(HttpTypes.prototype, "okResult", {
         get: function () { throw new Error("Use this in Typescript typeof construct"); },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(HttpTypes.prototype, "error", {
+    Object.defineProperty(HttpTypes.prototype, "errorResult", {
         get: function () { throw new Error("Use this in Typescript typeof construct"); },
         enumerable: true,
         configurable: true

@@ -7,9 +7,17 @@ import { OkResult, ErrorResponseResult, AuthorizationErrorResult, TransportError
  * It must be used if running via dispatching action is not appropriate
  * but actions for request lifecycle is required (for example when using Saga).
  */
-export interface ActionFactory<TParams, TResult, TError> {
+export interface ActionFactory<TParams, TResult, TError> extends ActionTypeGuards<TParams, TResult, TError> {
     /** A set of fields can be used with Typescript typeof operator. */
     types: ActionTypes<TParams, TResult, TError>;
+    /** Factory for request running lifecycle actions. */
+    running(params: TParams): RequestRunningAction<TParams>;
+    /** Factory for request successfull finishing lifecycle action. */
+    ok(params: TParams, result: OkResult<TResult>): OkResultAction<TParams, TResult>;
+    /** Factory for request error lifecycle action. */
+    error(params: TParams, error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult): ErrorResultAction<TParams, TError>;
+}
+export interface ActionTypeGuards<TParams, TResult, TError> {
     /**
      * Checks if action is lifecycle action.
      */
@@ -25,12 +33,6 @@ export interface ActionFactory<TParams, TResult, TError> {
     isTransportError(action?: Action): action is TransportErrorResultAction<TParams>;
     /** Checks if action is request finishing action, either error or successful. */
     isCompleted(action?: Action): action is (ErrorResultAction<TParams, TError> | OkResultAction<TParams, TResult>);
-    /** Factory for request running lifecycle actions. */
-    running(params: TParams): RequestRunningAction<TParams>;
-    /** Factory for request successfull finishing lifecycle action. */
-    ok(params: TParams, result: OkResult<TResult>): OkResultAction<TParams, TResult>;
-    /** Factory for request error lifecycle action. */
-    error(params: TParams, error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult): ErrorResultAction<TParams, TError>;
 }
 export interface MakeRequestActionFactory<TParams> {
     /**
@@ -55,11 +57,17 @@ export interface MakeRequestWithBodyActionFactory<TParams, TBody> {
     isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
 }
 export interface ActionTypes<TParams, TResult, TError> {
+    /** Type of TParams type param. */
     params: TParams;
+    /** Type of TResult type param. */
     result: TResult;
+    /** Type of TError type param. */
     error: TError;
+    /** Type of action representing running request. */
     runningAction: RequestRunningAction<TParams>;
+    /** Type of action representing successfull result of request execution. */
     okAction: OkResultAction<TParams, TResult>;
+    /** Type of action representing error result of request execution. */
     errorAction: ErrorResultAction<TParams, TError>;
 }
 export interface ReduxHttpLifecycleActionBase<TParams> extends Action {

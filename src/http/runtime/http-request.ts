@@ -126,8 +126,8 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
 
 class HttpTypes<TBody, TParams, TResult, TError> implements HttpRequestWithBodyTypes<TBody, TParams, TResult, TError> {
     get params(): TParams { throw new Error("Use this in Typescript typeof construct"); }
-    get result(): TResult { throw new Error("Use this in Typescript typeof construct"); }
-    get error(): TError { throw new Error("Use this in Typescript typeof construct"); }
+    get okResult(): TResult { throw new Error("Use this in Typescript typeof construct"); }
+    get errorResult(): TError { throw new Error("Use this in Typescript typeof construct"); }
     get response(): HttpResult<TResult, TError> { throw new Error("Use this in Typescript typeof construct"); }
     get body(): TBody { throw new Error("Use this in Typescript typeof construct"); }
 }

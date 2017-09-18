@@ -64,12 +64,12 @@ export interface HttpRequestTypes<TParams, TResult, TError> {
      * Type of response.
      * Don't access value of the property, use it with Typescript typeof operator only.
      */
-    result: TResult;
+    okResult: TResult;
     /**
      * Type of error for error response with body.
      * Don't access value of the property, use it with Typescript typeof operator only.
      */
-    error: TError;
+    errorResult: TError;
     /**
      * Union type of all possible successfull and error results.
      * Don't access value of the property, use it with Typescript typeof operator only.
