@@ -17,7 +17,7 @@ import {
     MakeRequestActionFactory,
     MakeRequestWithBodyActionFactory,
     MakeRequestAction,
-    MakeRequestWithBodyAction
+    MakeRequestWithBodyAction,
 } from "../api";
 
 import { formatActionType, parseActionType, MatchActionInfo, OperationType } from "./action-type-helper";

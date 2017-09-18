@@ -34,27 +34,31 @@ export interface ActionTypeGuards<TParams, TResult, TError> {
     /** Checks if action is request finishing action, either error or successful. */
     isCompleted(action?: Action): action is (ErrorResultAction<TParams, TError> | OkResultAction<TParams, TResult>);
 }
-export interface MakeRequestActionFactory<TParams> {
-    /**
-     * Creates an action for running request with parameters.
-     * To actually run the request dispatch created action.
-     */
-    request(params: TParams): MakeRequestAction<TParams>;
+export interface MakeRequestActionTypeGuards<TParams> {
     /**
      * True if action initiating execution of this request.
      */
     isRequesting(action?: Action): action is MakeRequestAction<TParams>;
 }
-export interface MakeRequestWithBodyActionFactory<TParams, TBody> {
+export interface MakeRequestActionFactory<TParams> extends MakeRequestActionTypeGuards<TParams> {
+    /**
+     * Creates an action for running request with parameters.
+     * To actually run the request dispatch created action.
+     */
+    request(params: TParams): MakeRequestAction<TParams>;
+}
+export interface MakeRequestWithBodyActionTypeGuards<TParams, TBody> {
+    /**
+     * True if action initiating execution of this request.
+     */
+    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
+}
+export interface MakeRequestWithBodyActionFactory<TParams, TBody> extends MakeRequestWithBodyActionTypeGuards<TParams, TBody> {
     /**
      * Creates an action for running request with parameters and body.
      * To actually run the request dispatch created action.
      */
     request(params: TParams, body: TBody): MakeRequestWithBodyAction<TParams, TBody>;
-    /**
-     * True if action initiating execution of this request.
-     */
-    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
 }
 export interface ActionTypes<TParams, TResult, TError> {
     /** Type of TParams type param. */
