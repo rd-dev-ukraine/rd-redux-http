@@ -136,7 +136,7 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         return new RequestBuilder<TParams, TResult, TError>(this.config);
     }
 
-    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError> {
+    convertResult<TResult, TError=any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError> {
         if (!converter) {
             throw new Error("Coversion function is not defined.");
         }
@@ -187,7 +187,7 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
         return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
     }
 
-    convertResult<TResult, TError=any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+    convertResult<TResult, TError=any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
         if (!converter) {
             throw new Error("Coversion function is not defined.");
         }

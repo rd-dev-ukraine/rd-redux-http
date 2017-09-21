@@ -49,55 +49,34 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
 }
 
 function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): typeof config.processResponse {
-    const convertResult = config.convertResult || (
-        (text: string) => new Promise<TResult | TError>((resolve, reject) => {
-            try {
-                const result = JSON.parse(text);
-
-                resolve(result);
-            } catch (e) {
-                reject(e);
-            }
-        })
-    );
+    const convertResult = config.convertResult || ((response: Response) => response.json());
 
     return (response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
         if (response.ok || response.status === 400) {
-            return response.clone()
-                .text()
-                .then(text => {
-                    return convertResult(text, response.ok, params)
-                        .then(parsed => {
-                            if (response.ok) {
-                                const result: OkResult<TResult> = {
-                                    ok: true,
-                                    result: parsed as TResult
-                                };
+            return convertResult(response.clone(), response.ok, params)
+                .then(parsed => {
+                    if (response.ok) {
+                        const result: OkResult<TResult> = {
+                            ok: true,
+                            result: parsed as TResult
+                        };
 
-                                return result;
-                            } else {
-                                const error: ErrorResponseResult<TError> = {
-                                    ok: false,
-                                    errorType: "response",
-                                    error: parsed as TError
-                                };
-
-                                return error;
-                            }
-                        }, err => Promise.resolve<TransportErrorResult>({
+                        return result;
+                    } else {
+                        const error: ErrorResponseResult<TError> = {
                             ok: false,
-                            errorType: "transport",
-                            reason: "invalid-body",
-                            statusCode: response.status,
-                            error: err
-                        }));
+                            errorType: "response",
+                            error: parsed as TError
+                        };
 
+                        return error;
+                    }
                 }, err => Promise.resolve<TransportErrorResult>({
                     ok: false,
                     errorType: "transport",
-                    error: err,
                     reason: "invalid-body",
-                    statusCode: response.status
+                    statusCode: response.status,
+                    error: err
                 }));
         } else {
             if (response.status === 401 || response.status === 403) {

@@ -27,50 +27,32 @@ function createHttpRequest(config) {
 }
 exports.createHttpRequest = createHttpRequest;
 function defaultProcessResponseFactory(config) {
-    var convertResult = config.convertResult || (function (text) { return new Promise(function (resolve, reject) {
-        try {
-            var result = JSON.parse(text);
-            resolve(result);
-        }
-        catch (e) {
-            reject(e);
-        }
-    }); });
+    var convertResult = config.convertResult || (function (response) { return response.json(); });
     return function (response, params, body) {
         if (response.ok || response.status === 400) {
-            return response.clone()
-                .text()
-                .then(function (text) {
-                return convertResult(text, response.ok, params)
-                    .then(function (parsed) {
-                    if (response.ok) {
-                        var result = {
-                            ok: true,
-                            result: parsed
-                        };
-                        return result;
-                    }
-                    else {
-                        var error = {
-                            ok: false,
-                            errorType: "response",
-                            error: parsed
-                        };
-                        return error;
-                    }
-                }, function (err) { return Promise.resolve({
-                    ok: false,
-                    errorType: "transport",
-                    reason: "invalid-body",
-                    statusCode: response.status,
-                    error: err
-                }); });
+            return convertResult(response.clone(), response.ok, params)
+                .then(function (parsed) {
+                if (response.ok) {
+                    var result = {
+                        ok: true,
+                        result: parsed
+                    };
+                    return result;
+                }
+                else {
+                    var error = {
+                        ok: false,
+                        errorType: "response",
+                        error: parsed
+                    };
+                    return error;
+                }
             }, function (err) { return Promise.resolve({
                 ok: false,
                 errorType: "transport",
-                error: err,
                 reason: "invalid-body",
-                statusCode: response.status
+                statusCode: response.status,
+                error: err
             }); });
         }
         else {

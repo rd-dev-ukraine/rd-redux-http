@@ -23,7 +23,7 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
     /**
      * Converts string body to result or error.
      */
-    convertResult?: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>;
+    convertResult?: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>;
 }
 export interface HttpRequestEntryPoint {
     /**
@@ -161,7 +161,7 @@ export interface HttpRequestConfigurator<TParams> {
      * * Otherwise fails with transport error
      *
      */
-    convertResult<TResult, TError = any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError>;
+    convertResult<TResult, TError = any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError>;
 }
 /**
  * Configures HTTP request with body.
@@ -226,7 +226,7 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
      * * Otherwise fails with transport error
      *
      */
-    convertResult<TResult, TError = any>(converter: (body: string, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
+    convertResult<TResult, TError = any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError>;
 }
 /**
  * Creates an instances of HTTP request.
