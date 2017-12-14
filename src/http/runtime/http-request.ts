@@ -11,6 +11,9 @@ import {
 
 import { createActions } from "./actions";
 import { urlFromParams } from "./url-builder";
+import { HttpRequest } from "../../index";
+import { ReduxHttpRequestState, ReduxHttpInitialState } from "../api/http-request-redux";
+import { Action } from "redux";
 
 let counter = 1;
 
@@ -44,6 +47,7 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
     result.types = new HttpTypes<TBody, TParams, TResult, TError>();
     result.method = config.method;
     result.urlTemplate = config.urlTemplate;
+    result.reducer = createReducer(result as any);
 
     return result;
 }
@@ -101,6 +105,49 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
             }
         }
     }
+}
+
+function createReducer<TParams, TResult, TError>(httpRequest: HttpRequest<TParams, TResult, TError>):
+    (state: ReduxHttpRequestState<TParams, TResult, TError>, action: Action) => ReduxHttpRequestState<TParams, TResult, TError> {
+
+    return (state, action) => {
+        if (!state) {
+            state = {
+                fetchState: "initial"
+            } as ReduxHttpInitialState;
+        }
+
+        if (httpRequest.actions.isRunning(action)) {
+            return {
+                ...state,
+                error: undefined,
+                params: action.params,
+                fetchState: "loading"
+            } as any;
+        }
+
+        if (httpRequest.actions.isOk(action)) {
+            return {
+                ...state,
+                error: undefined,
+                data: action.result,
+                params: action.params,
+                fetchState: "successful"
+            };
+        }
+
+        if (httpRequest.actions.isError(action)) {
+            return {
+                ...state,
+                error: action,
+                params: action.params,
+                fetchState: "error"
+            };
+        }
+
+
+        return state;
+    };
 }
 
 class HttpTypes<TBody, TParams, TResult, TError> implements HttpRequestWithBodyTypes<TBody, TParams, TResult, TError> {

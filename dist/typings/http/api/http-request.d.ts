@@ -1,6 +1,7 @@
 /** Defines an interface for configured HTTP request. */
 import { HttpResult } from "./result";
 import { ActionFactory, MakeRequestActionFactory, MakeRequestWithBodyActionFactory } from "./actions";
+import { WithReducer } from "./http-request-redux";
 export interface HttpRequestBasicInfo {
     /** HTTP method (verb) of the request. */
     method: string;
@@ -12,7 +13,7 @@ export interface HttpRequestBasicInfo {
 /**
  * Allows to run configured HTTP request.
  */
-export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicInfo {
+export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicInfo, WithReducer<TParams, TResult, TError> {
     /**
      * Runs HTTP request with specified parameters.
      * @param params Parameters for HTTP request.
@@ -32,7 +33,7 @@ export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicI
 /**
  * Allows to run configured HTTP request.
  */
-export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends HttpRequestBasicInfo {
+export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends HttpRequestBasicInfo, WithReducer<TParams, TResult, TError> {
     /**
      * Runs HTTP request with specified parameters and body.
      * @param params Parameters for HTTP request.

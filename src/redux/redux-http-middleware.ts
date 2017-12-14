@@ -6,6 +6,7 @@ import { parseActionType } from "../http/runtime/action-type-helper";
 import { ReduxHttpMiddleware } from "./api";
 import { RequestRegistry } from "./request-registry";
 
+
 /**
  * Factory for creating middlewares for rd-redux-http integration with redux.
  * One middleware per store is enough usually :)
