@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_type_helper_1 = require("./action-type-helper");
-var AnyActionTypeGuardsImpl = (function () {
+var AnyActionTypeGuardsImpl = /** @class */ (function () {
     function AnyActionTypeGuardsImpl() {
     }
     AnyActionTypeGuardsImpl.prototype.isMy = function (action) {

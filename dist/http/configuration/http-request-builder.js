@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var querystring = require("querystring");
 var runtime_1 = require("../runtime");
-var EntryPoint = (function () {
+var EntryPoint = /** @class */ (function () {
     function EntryPoint() {
     }
     EntryPoint.prototype.fetch = function (method, urlTemplate, appendRestOfParamsToQueryString) {
@@ -46,7 +46,7 @@ var EntryPoint = (function () {
     };
     return EntryPoint;
 }());
-var RequestConfigurator = (function () {
+var RequestConfigurator = /** @class */ (function () {
     function RequestConfigurator(config) {
         this.config = config;
         if (!config) {
@@ -114,7 +114,7 @@ var RequestConfigurator = (function () {
     };
     return RequestConfigurator;
 }());
-var RequestWithBodyConfigurator = (function () {
+var RequestWithBodyConfigurator = /** @class */ (function () {
     function RequestWithBodyConfigurator(config) {
         this.config = config;
         if (!config) {
@@ -154,7 +154,7 @@ var RequestWithBodyConfigurator = (function () {
     };
     return RequestWithBodyConfigurator;
 }());
-var RequestBuilder = (function () {
+var RequestBuilder = /** @class */ (function () {
     function RequestBuilder(config) {
         this.config = config;
         if (!config) {
@@ -166,7 +166,7 @@ var RequestBuilder = (function () {
     };
     return RequestBuilder;
 }());
-var RequestWithBodyBuilder = (function () {
+var RequestWithBodyBuilder = /** @class */ (function () {
     function RequestWithBodyBuilder(config) {
         this.config = config;
         if (!config) {

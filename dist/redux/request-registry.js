@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var RequestRegistry = (function () {
+var RequestRegistry = /** @class */ (function () {
     function RequestRegistry() {
         this.map = {};
     }

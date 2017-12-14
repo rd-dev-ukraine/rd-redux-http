@@ -77,7 +77,7 @@ function defaultProcessResponseFactory(config) {
         }
     };
 }
-var HttpTypes = (function () {
+var HttpTypes = /** @class */ (function () {
     function HttpTypes() {
     }
     Object.defineProperty(HttpTypes.prototype, "params", {

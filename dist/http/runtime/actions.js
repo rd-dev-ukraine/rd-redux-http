@@ -13,7 +13,7 @@ function createActions(id, method, url) {
     return new ActionFactoryImpl(id, method, url);
 }
 exports.createActions = createActions;
-var ActionFactoryImpl = (function () {
+var ActionFactoryImpl = /** @class */ (function () {
     function ActionFactoryImpl(requestId, method, url) {
         this.requestId = requestId;
         this.method = method;
