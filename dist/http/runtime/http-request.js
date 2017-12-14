@@ -109,27 +109,32 @@ var HttpTypes = /** @class */ (function () {
     function HttpTypes() {
     }
     Object.defineProperty(HttpTypes.prototype, "params", {
-        get: function () { throw new Error("Use this in Typescript typeof construct"); },
+        get: function () { throw new Error("Use this in Typescript typeof expression only."); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(HttpTypes.prototype, "okResult", {
-        get: function () { throw new Error("Use this in Typescript typeof construct"); },
+        get: function () { throw new Error("Use this in Typescript typeof expression only."); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(HttpTypes.prototype, "errorResult", {
-        get: function () { throw new Error("Use this in Typescript typeof construct"); },
+        get: function () { throw new Error("Use this in Typescript typeof expression only."); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(HttpTypes.prototype, "response", {
-        get: function () { throw new Error("Use this in Typescript typeof construct"); },
+        get: function () { throw new Error("Use this in Typescript typeof expression only."); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(HttpTypes.prototype, "body", {
         get: function () { throw new Error("Use this in Typescript typeof construct"); },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HttpTypes.prototype, "reduxState", {
+        get: function () { throw new Error("Use this in Typescript typeof expression only."); },
         enumerable: true,
         configurable: true
     });
