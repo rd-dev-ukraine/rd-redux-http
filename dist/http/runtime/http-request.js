@@ -36,7 +36,7 @@ function createHttpRequest(config) {
 }
 exports.createHttpRequest = createHttpRequest;
 function defaultProcessResponseFactory(config) {
-    var convertResult = config.convertResult || (function (response) { return response.json(); });
+    var convertResult = config.convertResult || (function (response) { return response.clone().json(); });
     return function (response, params, body) {
         if (response.ok || response.status === 400) {
             return convertResult(response.clone(), response.ok, params)

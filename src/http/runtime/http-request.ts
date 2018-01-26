@@ -53,7 +53,7 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpR
 }
 
 function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): typeof config.processResponse {
-    const convertResult = config.convertResult || ((response: Response) => response.json());
+    const convertResult = config.convertResult || ((response: Response) => response.clone().json());
 
     return (response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
         if (response.ok || response.status === 400) {
