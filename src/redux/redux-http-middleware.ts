@@ -19,7 +19,11 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
 
             const parsedAction = parseActionType(action.type);
             if (parsedAction.isMatch && parsedAction.operation === "request") {
-                const request = registry.take(parsedAction.requestId) as HttpRequestWithBody<any, any, any, any>;
+                const { request, transform } = registry.take(parsedAction.requestId) as {
+                    request: HttpRequestWithBody<any, any, any, any>;
+                    transform: (result: any) => any;
+                };
+
                 const typedAction = action as MakeRequestWithBodyAction<any, any>;
 
                 if (request) {
@@ -29,7 +33,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
                         .then(result => {
 
                             const resultAction = result.ok
-                                ? request.actions.ok(typedAction.params, result)
+                                ? request.actions.ok(typedAction.params, transform(result))
                                 : request.actions.error(typedAction.params, result);
 
                             store.dispatch(resultAction);
@@ -42,12 +46,12 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
 
     ) as any;
 
-    mw.register = (request: any) => {
+    mw.register = (request: any, transform?: (result: any) => any) => {
         if (!request) {
             throw new Error("HttpRequest object is not defined.");
         }
 
-        registry.register(request);
+        registry.register(request, transform || (r => r));
         const requestTyped = request as HttpRequestWithBody<any, any, any, any>;
 
         request.request = (params: any, body?: any): any => requestTyped.actions.request(params, body);

@@ -4,11 +4,11 @@ var RequestRegistry = /** @class */ (function () {
     function RequestRegistry() {
         this.map = {};
     }
-    RequestRegistry.prototype.register = function (request) {
+    RequestRegistry.prototype.register = function (request, transform) {
         if (!request) {
             throw new Error("Http Request object is not defined.");
         }
-        this.map[request.id] = request;
+        this.map[request.id] = { request: request, transform: transform };
     };
     RequestRegistry.prototype.take = function (requestId) {
         if (!requestId) {
