@@ -44,7 +44,7 @@ var AnyActionTypeGuardsImpl = /** @class */ (function () {
     AnyActionTypeGuardsImpl.prototype.isCompleted = function (action) {
         return this.isOk(action) || this.isError(action);
     };
-    AnyActionTypeGuardsImpl.prototype.isRequesting = function (action) {
+    AnyActionTypeGuardsImpl.prototype.isTriggering = function (action) {
         if (!action) {
             return false;
         }

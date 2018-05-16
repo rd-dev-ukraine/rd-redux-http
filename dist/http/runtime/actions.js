@@ -73,7 +73,7 @@ var ActionFactoryImpl = /** @class */ (function () {
     ActionFactoryImpl.prototype.error = function (params, error) {
         return __assign({ type: this.actionType("error"), params: params }, error);
     };
-    ActionFactoryImpl.prototype.request = function (params, body) {
+    ActionFactoryImpl.prototype.trigger = function (params, body) {
         if (body) {
             return {
                 type: this.actionType("request"),
@@ -88,7 +88,7 @@ var ActionFactoryImpl = /** @class */ (function () {
             };
         }
     };
-    ActionFactoryImpl.prototype.isRequesting = function (action) {
+    ActionFactoryImpl.prototype.isTriggering = function (action) {
         var match = this.match(action);
         return match.isMatch && match.operation === "request";
     };

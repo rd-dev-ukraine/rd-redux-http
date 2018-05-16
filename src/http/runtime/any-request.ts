@@ -11,8 +11,8 @@ import {
     ErrorResponseAction,
     AuthorizationErrorResultAction,
     TransportErrorResultAction,
-    MakeRequestWithBodyAction,
-    MakeRequestAction
+    TriggerRequestWithBodyAction,
+    TriggerRequestAction
 } from "../api";
 
 import { parseActionType } from "./action-type-helper";
@@ -74,8 +74,8 @@ class AnyActionTypeGuardsImpl<TParams, TResult, TError, TBody=undefined> impleme
         return this.isOk(action) || this.isError(action);
     }
 
-    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
-    isRequesting(action?: Action): action is MakeRequestAction<TParams> {
+    isTriggering(action?: Action): action is TriggerRequestWithBodyAction<TParams, TBody>;
+    isTriggering(action?: Action): action is TriggerRequestAction<TParams> {
         if (!action) {
             return false;
         }

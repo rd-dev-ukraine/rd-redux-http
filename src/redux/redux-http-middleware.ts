@@ -1,6 +1,6 @@
 import { MiddlewareAPI, Dispatch, Action } from "redux";
 
-import { HttpRequestWithBody, MakeRequestWithBodyAction } from "../http";
+import { HttpRequestWithBody, TriggerRequestWithBodyAction } from "../http";
 import { parseActionType } from "../http/runtime/action-type-helper";
 
 import { ReduxHttpMiddleware } from "./api";
@@ -24,7 +24,7 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
                     transform: (result: any) => any;
                 };
 
-                const typedAction = action as MakeRequestWithBodyAction<any, any>;
+                const typedAction = action as TriggerRequestWithBodyAction<any, any>;
 
                 if (request) {
                     store.dispatch(request.actions.running(typedAction.params));
@@ -54,8 +54,8 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
         registry.register(request, transform || (r => r));
         const requestTyped = request as HttpRequestWithBody<any, any, any, any>;
 
-        request.request = (params: any, body?: any): any => requestTyped.actions.request(params, body);
-        request.isRequesting = (action?: Action): any => requestTyped.actions.isRequesting(action);
+        request.trigger = (params: any, body?: any): any => requestTyped.actions.trigger(params, body);
+        request.isTriggering = (action?: Action): any => requestTyped.actions.isTriggering(action);
 
         return request as any;
     };

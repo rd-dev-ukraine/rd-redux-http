@@ -26,7 +26,8 @@ describe("Redux integration", () => {
             body: "body"
         };
 
-        const action = createPost.request(
+
+        const action = createPost.trigger(
             { postId: 1 },
             post);
 
@@ -36,7 +37,7 @@ describe("Redux integration", () => {
             body: post
         });
 
-        createPost.isRequesting(action).should.be.true();
+        createPost.isTriggering(action).should.be.true();
         createPost.actions.isMy(action).should.be.true();
         createPost.actions.isOk(action).should.be.false();
         createPost.actions.isError(action).should.be.false();

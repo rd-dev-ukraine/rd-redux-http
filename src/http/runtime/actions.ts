@@ -16,8 +16,8 @@ import {
     TransportErrorResultAction,
     MakeRequestActionFactory,
     MakeRequestWithBodyActionFactory,
-    MakeRequestAction,
-    MakeRequestWithBodyAction,
+    TriggerRequestAction,
+    TriggerRequestWithBodyAction,
 } from "../api";
 
 import { formatActionType, parseActionType, MatchActionInfo, OperationType } from "./action-type-helper";
@@ -116,9 +116,9 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
         };
     }
 
-    request(params: TParams): MakeRequestAction<TParams>;
-    request(params: TParams, body: TBody): MakeRequestWithBodyAction<TParams, TBody>;
-    request(params: TParams, body?: any): any {
+    trigger(params: TParams): TriggerRequestAction<TParams>;
+    trigger(params: TParams, body: TBody): TriggerRequestWithBodyAction<TParams, TBody>;
+    trigger(params: TParams, body?: any): any {
         if (body) {
             return {
                 type: this.actionType("request"),
@@ -133,8 +133,8 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
         }
     }
 
-    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
-    isRequesting(action?: Action): action is MakeRequestAction<TParams> {
+    isTriggering(action?: Action): action is TriggerRequestWithBodyAction<TParams, TBody>;
+    isTriggering(action?: Action): action is TriggerRequestAction<TParams> {
         const match = this.match(action);
         return match.isMatch && match.operation === "request";
     }

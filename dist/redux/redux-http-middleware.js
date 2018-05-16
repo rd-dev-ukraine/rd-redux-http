@@ -32,8 +32,8 @@ function reduxHttpMiddlewareFactory() {
         }
         registry.register(request, transform || (function (r) { return r; }));
         var requestTyped = request;
-        request.request = function (params, body) { return requestTyped.actions.request(params, body); };
-        request.isRequesting = function (action) { return requestTyped.actions.isRequesting(action); };
+        request.trigger = function (params, body) { return requestTyped.actions.trigger(params, body); };
+        request.isTriggering = function (action) { return requestTyped.actions.isTriggering(action); };
         return request;
     };
     return mw;

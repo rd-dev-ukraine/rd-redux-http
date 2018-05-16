@@ -52,7 +52,7 @@ export interface MakeRequestActionTypeGuards<TParams> {
     /**
      * True if action initiating execution of this request.
      */
-    isRequesting(action?: Action): action is MakeRequestAction<TParams>;
+    isTriggering(action?: Action): action is TriggerRequestAction<TParams>;
 }
 
 export interface MakeRequestActionFactory<TParams> extends MakeRequestActionTypeGuards<TParams> {
@@ -60,14 +60,14 @@ export interface MakeRequestActionFactory<TParams> extends MakeRequestActionType
      * Creates an action for running request with parameters.
      * To actually run the request dispatch created action.
      */
-    request(params: TParams): MakeRequestAction<TParams>;
+    trigger(params: TParams): TriggerRequestAction<TParams>;
 }
 
 export interface MakeRequestWithBodyActionTypeGuards<TParams ,TBody> {
     /**
      * True if action initiating execution of this request.
      */
-    isRequesting(action?: Action): action is MakeRequestWithBodyAction<TParams, TBody>;
+    isTriggering(action?: Action): action is TriggerRequestWithBodyAction<TParams, TBody>;
 }
 
 export interface MakeRequestWithBodyActionFactory<TParams, TBody> extends MakeRequestWithBodyActionTypeGuards<TParams, TBody>{
@@ -75,7 +75,7 @@ export interface MakeRequestWithBodyActionFactory<TParams, TBody> extends MakeRe
      * Creates an action for running request with parameters and body.
      * To actually run the request dispatch created action.
      */
-    request(params: TParams, body: TBody): MakeRequestWithBodyAction<TParams, TBody>;
+    trigger(params: TParams, body: TBody): TriggerRequestWithBodyAction<TParams, TBody>;
 
 
 }
@@ -122,9 +122,9 @@ export interface TransportErrorResultAction<TParams> extends ReduxHttpLifecycleA
 /** Union types of all error actions. */
 export type ErrorResultAction<TParams, TError> = ErrorResponseAction<TParams, TError> | AuthorizationErrorResultAction<TParams> | TransportErrorResultAction<TParams>;
 
-export interface MakeRequestAction<TParams> extends ReduxHttpLifecycleActionBase<TParams> {
+export interface TriggerRequestAction<TParams> extends ReduxHttpLifecycleActionBase<TParams> {
 }
 
-export interface MakeRequestWithBodyAction<TParams, TBody> extends ReduxHttpLifecycleActionBase<TParams> {
+export interface TriggerRequestWithBodyAction<TParams, TBody> extends ReduxHttpLifecycleActionBase<TParams> {
     body: TBody;
 }
