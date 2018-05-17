@@ -30,11 +30,14 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
                     store.dispatch(request.actions.running(typedAction.params));
 
                     request(typedAction.params, typedAction.body)
-                        .then(result => {
+                        .then(response => {
 
-                            const resultAction = result.ok
-                                ? request.actions.ok(typedAction.params, transform(result))
-                                : request.actions.error(typedAction.params, result);
+                            const resultAction = response.ok
+                                ? request.actions.ok(typedAction.params, {
+                                    ...response,
+                                    result: transform(response.result)
+                                })
+                                : request.actions.error(typedAction.params, response);
 
                             store.dispatch(resultAction);
                         });

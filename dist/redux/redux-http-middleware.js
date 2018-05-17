@@ -1,4 +1,12 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_type_helper_1 = require("../http/runtime/action-type-helper");
 var request_registry_1 = require("./request-registry");
@@ -16,10 +24,10 @@ function reduxHttpMiddlewareFactory() {
             if (request_1) {
                 store.dispatch(request_1.actions.running(typedAction_1.params));
                 request_1(typedAction_1.params, typedAction_1.body)
-                    .then(function (result) {
-                    var resultAction = result.ok
-                        ? request_1.actions.ok(typedAction_1.params, transform_1(result))
-                        : request_1.actions.error(typedAction_1.params, result);
+                    .then(function (response) {
+                    var resultAction = response.ok
+                        ? request_1.actions.ok(typedAction_1.params, __assign({}, response, { result: transform_1(response.result) }))
+                        : request_1.actions.error(typedAction_1.params, response);
                     store.dispatch(resultAction);
                 });
             }
