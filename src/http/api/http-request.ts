@@ -1,7 +1,6 @@
 /** Defines an interface for configured HTTP request. */
 import { HttpResult } from "./result";
 import { ActionFactory, MakeRequestActionFactory, MakeRequestWithBodyActionFactory } from "./actions";
-import { WithReducer, ReduxHttpRequestState } from "./http-request-redux";
 
 export interface HttpRequestBasicInfo {
     /** HTTP method (verb) of the request. */
@@ -17,7 +16,7 @@ export interface HttpRequestBasicInfo {
  * Allows to run configured HTTP request.
  */
 export interface HttpRequest<TParams, TResult, TError>
-    extends HttpRequestBasicInfo, WithReducer<TParams, TResult, TError> {
+    extends HttpRequestBasicInfo {
     /**
      * Runs HTTP request with specified parameters.
      * @param params Parameters for HTTP request.
@@ -41,7 +40,7 @@ export interface HttpRequest<TParams, TResult, TError>
  * Allows to run configured HTTP request.
  */
 export interface HttpRequestWithBody<TBody, TParams, TResult, TError>
-    extends HttpRequestBasicInfo, WithReducer<TParams, TResult, TError> {
+    extends HttpRequestBasicInfo {
     /**
      * Runs HTTP request with specified parameters and body.
      * @param params Parameters for HTTP request.
@@ -90,9 +89,6 @@ export interface HttpRequestTypes<TParams, TResult, TError> {
      * Don't access value of the property, use it with Typescript typeof operator only.
      */
     response: HttpResult<TResult, TError>;
-
-    /** Type of state processed by built-in reducer. */
-    reduxState: ReduxHttpRequestState<TParams, TResult, TError>;
 }
 
 /**

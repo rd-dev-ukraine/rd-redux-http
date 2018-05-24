@@ -5,7 +5,7 @@ import { parseActionType } from "../http/runtime/action-type-helper";
 
 import { ReduxHttpMiddleware } from "./api";
 import { RequestRegistry } from "./request-registry";
-
+import { createReducer } from "./create-reducer";
 
 /**
  * Factory for creating middlewares for rd-redux-http integration with redux.
@@ -59,6 +59,8 @@ export function reduxHttpMiddlewareFactory(): ReduxHttpMiddleware {
 
         request.trigger = (params: any, body?: any): any => requestTyped.actions.trigger(params, body);
         request.isTriggering = (action?: Action): any => requestTyped.actions.isTriggering(action);
+        request.reducer = createReducer(request as any);
+
 
         return request as any;
     };

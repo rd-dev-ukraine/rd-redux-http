@@ -8,13 +8,24 @@ import {
     MakeRequestWithBodyActionFactory
 } from "../http";
 
+import { WithReducer, ReduxHttpRequestTypes, ReduxHttpRequestWithBodyTypes } from "./http-request-redux";
+
 
 /**
  * HTTP request augmented for redux integration.
  */
 export interface ReduxHttpRequest<TParams, TResult, TError={}> extends
     HttpRequest<TParams, TResult, TError>,
-    MakeRequestActionFactory<TParams> {
+    MakeRequestActionFactory<TParams>,
+    WithReducer<TParams, TResult, TError> {
+
+    /**
+     * Exposes types of params, error, and result.
+     *
+     * Useful for avoiding duplication of types.
+     * Use it as const result: typeof myRequest.types.result = ...
+     */
+    types: ReduxHttpRequestTypes<TParams, TResult, TError>;
 }
 
 /**
@@ -22,7 +33,9 @@ export interface ReduxHttpRequest<TParams, TResult, TError={}> extends
  */
 export interface ReduxHttpRequestWithBody<TBody, TParams, TResult, TError> extends
     HttpRequestWithBody<TBody, TParams, TResult, TError>,
-    MakeRequestWithBodyActionFactory<TParams, TBody> {
+    MakeRequestWithBodyActionFactory<TParams, TBody>,
+    WithReducer<TParams, TResult, TError> {
+    types: ReduxHttpRequestWithBodyTypes<TBody, TParams, TResult, TError>;
 }
 
 /**

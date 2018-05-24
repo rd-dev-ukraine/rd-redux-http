@@ -10,6 +10,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_type_helper_1 = require("../http/runtime/action-type-helper");
 var request_registry_1 = require("./request-registry");
+var create_reducer_1 = require("./create-reducer");
 /**
  * Factory for creating middlewares for rd-redux-http integration with redux.
  * One middleware per store is enough usually :)
@@ -42,6 +43,7 @@ function reduxHttpMiddlewareFactory() {
         var requestTyped = request;
         request.trigger = function (params, body) { return requestTyped.actions.trigger(params, body); };
         request.isTriggering = function (action) { return requestTyped.actions.isTriggering(action); };
+        request.reducer = create_reducer_1.createReducer(request);
         return request;
     };
     return mw;

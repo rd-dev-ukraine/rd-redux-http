@@ -10,7 +10,6 @@ describe("Redux integration", () => {
     it("should be fluent", () => {
         const mw = reduxHttpMiddlewareFactory();
 
-
         const createPost = mw.register(
             http
                 .put<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
@@ -44,6 +43,21 @@ describe("Redux integration", () => {
         createPost.actions.isErrorResponse(action).should.be.false();
         createPost.actions.isAuthorizationError(action).should.be.false();
         createPost.actions.isTransportError(action).should.be.false();
+    });
+
+    it("request should have reducer", () => {
+        const mw = reduxHttpMiddlewareFactory();
+
+        const createPost = mw.register(
+            http
+                .put<{ postId: number }>("https://jsonplaceholder.typicode.com/posts/:postId")
+                .jsonBody<Post>()
+                .resultFromJson<Post>()
+                .build()
+        );
+
+        createPost.reducer.should.not.be.null();
+        should.exist(createPost.reducer);
     });
 });
 

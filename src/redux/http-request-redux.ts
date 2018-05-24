@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult } from "./result";
+import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
 
 
 export interface ReduxHttpInitialState {
@@ -52,4 +52,27 @@ export interface WithReducer<TParams, TResult, TError> {
      * }
      */
     reducer(state: ReduxHttpRequestState<TParams, TResult, TError>, action: Action): ReduxHttpRequestState<TParams, TResult, TError>;
+}
+
+
+/**
+ * Exposes properties which have types related to the request: params, result, errors etc.
+ * Don't try to read values of the properties, use it with Typescript typeof operator only.
+ */
+export interface ReduxHttpRequestTypes<TParams, TResult, TError> extends HttpRequestTypes<TParams, TResult, TError> {
+
+    /** Type of state processed by built-in reducer. */
+    reduxState: ReduxHttpRequestState<TParams, TResult, TError>;
+}
+
+/**
+ * Exposes properties which have types related to the request: params, result, errors etc.
+ * Don't try to read values of the properties, use it with Typescript typeof operator only.
+ */
+export interface ReduxHttpRequestWithBodyTypes<TBody, TParams, TResult, TError> extends ReduxHttpRequestTypes<TParams, TResult, TError> {
+    /**
+     * Type of request body.
+     * Don't access value of the property, use it with Typescript typeof operator only.
+     */
+    body: TBody;
 }
