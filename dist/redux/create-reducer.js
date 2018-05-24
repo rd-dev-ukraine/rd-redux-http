@@ -8,21 +8,22 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var _1 = require(".");
 function createReducer(httpRequest) {
     return function (state, action) {
         if (!state) {
             state = {
-                fetchState: "initial"
+                fetchState: _1.FETCH_STATE_INITIAL
             };
         }
         if (httpRequest.actions.isRunning(action)) {
-            return __assign({}, state, { error: undefined, params: action.params, fetchState: "loading" });
+            return __assign({}, state, { error: undefined, params: action.params, fetchState: _1.FETCH_STATE_LOADING });
         }
         if (httpRequest.actions.isOk(action)) {
-            return __assign({}, state, { error: undefined, data: action.result, params: action.params, fetchState: "successful" });
+            return __assign({}, state, { error: undefined, data: action.result, params: action.params, fetchState: _1.FETCH_STATE_SUCCESS });
         }
         if (httpRequest.actions.isError(action)) {
-            return __assign({}, state, { error: action, params: action.params, fetchState: "error" });
+            return __assign({}, state, { error: action, params: action.params, fetchState: _1.FETCH_STATE_ERROR });
         }
         return state;
     };

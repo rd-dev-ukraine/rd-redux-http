@@ -1,34 +1,36 @@
 import { Action } from "redux";
 import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
-
+import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
 
 export interface ReduxHttpInitialState {
-    fetchState: "initial";
+    fetchState: FETCH_STATE_INITIAL;
 }
 
 export interface ReduxHttpLoadingState<TParams> {
-    fetchState: "loading";
+    fetchState: FETCH_STATE_LOADING;
     params: TParams;
 }
 
 export interface ReduxHttpSuccessState<TParams, TResult> {
-    fetchState: "successful";
+    fetchState: FETCH_STATE_SUCCESS;
     params: TParams;
     data: TResult;
 }
 
 export interface ReduxHttpErrorState<TParams, TError> {
-    fetchState: "error";
+    fetchState: FETCH_STATE_ERROR;
     params: TParams;
     error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
 }
 
 export type ReduxHttpRequestState<TParams, TResult, TError> =
-    ReduxHttpInitialState | ReduxHttpLoadingState<TParams> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TError>;
+    | ReduxHttpInitialState
+    | ReduxHttpLoadingState<TParams>
+    | ReduxHttpSuccessState<TParams, TResult>
+    | ReduxHttpErrorState<TParams, TError>;
 
 /** Adds reducer method to HTTP request object. */
 export interface WithReducer<TParams, TResult, TError> {
-
     /**
      * Standard reducer method which processes actions belongs to the request.
      *
@@ -51,16 +53,17 @@ export interface WithReducer<TParams, TResult, TError> {
      *     }
      * }
      */
-    reducer(state: ReduxHttpRequestState<TParams, TResult, TError>, action: Action): ReduxHttpRequestState<TParams, TResult, TError>;
+    reducer(
+        state: ReduxHttpRequestState<TParams, TResult, TError>,
+        action: Action
+    ): ReduxHttpRequestState<TParams, TResult, TError>;
 }
-
 
 /**
  * Exposes properties which have types related to the request: params, result, errors etc.
  * Don't try to read values of the properties, use it with Typescript typeof operator only.
  */
 export interface ReduxHttpRequestTypes<TParams, TResult, TError> extends HttpRequestTypes<TParams, TResult, TError> {
-
     /** Type of state processed by built-in reducer. */
     reduxState: ReduxHttpRequestState<TParams, TResult, TError>;
 }
@@ -69,7 +72,8 @@ export interface ReduxHttpRequestTypes<TParams, TResult, TError> extends HttpReq
  * Exposes properties which have types related to the request: params, result, errors etc.
  * Don't try to read values of the properties, use it with Typescript typeof operator only.
  */
-export interface ReduxHttpRequestWithBodyTypes<TBody, TParams, TResult, TError> extends ReduxHttpRequestTypes<TParams, TResult, TError> {
+export interface ReduxHttpRequestWithBodyTypes<TBody, TParams, TResult, TError>
+    extends ReduxHttpRequestTypes<TParams, TResult, TError> {
     /**
      * Type of request body.
      * Don't access value of the property, use it with Typescript typeof operator only.

@@ -1,19 +1,20 @@
 import { Action } from "redux";
 import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
+import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
 export interface ReduxHttpInitialState {
-    fetchState: "initial";
+    fetchState: FETCH_STATE_INITIAL;
 }
 export interface ReduxHttpLoadingState<TParams> {
-    fetchState: "loading";
+    fetchState: FETCH_STATE_LOADING;
     params: TParams;
 }
 export interface ReduxHttpSuccessState<TParams, TResult> {
-    fetchState: "successful";
+    fetchState: FETCH_STATE_SUCCESS;
     params: TParams;
     data: TResult;
 }
 export interface ReduxHttpErrorState<TParams, TError> {
-    fetchState: "error";
+    fetchState: FETCH_STATE_ERROR;
     params: TParams;
     error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
 }

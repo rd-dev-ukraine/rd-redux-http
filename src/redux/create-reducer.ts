@@ -2,14 +2,18 @@ import { Action } from "redux";
 
 import { HttpRequest } from "../http";
 import { ReduxHttpRequestState, ReduxHttpInitialState } from "./http-request-redux";
+import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from ".";
 
-export function createReducer<TParams, TResult, TError>(httpRequest: HttpRequest<TParams, TResult, TError>):
-    (state: ReduxHttpRequestState<TParams, TResult, TError>, action: Action) => ReduxHttpRequestState<TParams, TResult, TError> {
-
+export function createReducer<TParams, TResult, TError>(
+    httpRequest: HttpRequest<TParams, TResult, TError>
+): (
+    state: ReduxHttpRequestState<TParams, TResult, TError>,
+    action: Action
+) => ReduxHttpRequestState<TParams, TResult, TError> {
     return (state, action) => {
         if (!state) {
             state = {
-                fetchState: "initial"
+                fetchState: FETCH_STATE_INITIAL
             } as ReduxHttpInitialState;
         }
 
@@ -18,7 +22,7 @@ export function createReducer<TParams, TResult, TError>(httpRequest: HttpRequest
                 ...state,
                 error: undefined,
                 params: action.params,
-                fetchState: "loading"
+                fetchState: FETCH_STATE_LOADING
             } as any;
         }
 
@@ -28,7 +32,7 @@ export function createReducer<TParams, TResult, TError>(httpRequest: HttpRequest
                 error: undefined,
                 data: action.result,
                 params: action.params,
-                fetchState: "successful"
+                fetchState: FETCH_STATE_SUCCESS
             };
         }
 
@@ -37,10 +41,9 @@ export function createReducer<TParams, TResult, TError>(httpRequest: HttpRequest
                 ...state,
                 error: action,
                 params: action.params,
-                fetchState: "error"
+                fetchState: FETCH_STATE_ERROR
             };
         }
-
 
         return state;
     };

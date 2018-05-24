@@ -4,4 +4,5 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./redux-http-middleware"));
+__export(require("./fetch-state"));
 //# sourceMappingURL=index.js.map
