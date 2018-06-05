@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FETCH_STATE_INITIAL = "initial";
-exports.FETCH_STATE_LOADING = "loading";
-exports.FETCH_STATE_SUCCESS = "success";
+exports.FETCH_STATE_FETCHING = "fetching";
+exports.FETCH_STATE_SUCCESS = "ok";
 exports.FETCH_STATE_ERROR = "error";
 /**
  * Calculates common state from a set of states.
@@ -15,12 +15,12 @@ function calculateCommonState(state, options) {
         throw new Error("States are empty");
     }
     var unique = new Set(state);
-    if (unique.has(exports.FETCH_STATE_LOADING)) {
+    if (unique.has(exports.FETCH_STATE_FETCHING)) {
         return unique.has(exports.FETCH_STATE_ERROR)
             ? options.waitForLoadingOnError
-                ? exports.FETCH_STATE_LOADING
+                ? exports.FETCH_STATE_FETCHING
                 : exports.FETCH_STATE_ERROR
-            : exports.FETCH_STATE_LOADING;
+            : exports.FETCH_STATE_FETCHING;
     }
     if (unique.has(exports.FETCH_STATE_ERROR)) {
         return exports.FETCH_STATE_ERROR;

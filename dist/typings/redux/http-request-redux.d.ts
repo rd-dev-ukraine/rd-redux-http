@@ -1,24 +1,28 @@
 import { Action } from "redux";
 import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
-import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
+import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
 export interface ReduxHttpInitialState {
     fetchState: FETCH_STATE_INITIAL;
 }
-export interface ReduxHttpLoadingState<TParams> {
-    fetchState: FETCH_STATE_LOADING;
+export declare function isFetchingStateInitial<TParams, TResult, TError>(state?: ReduxHttpRequestState<TParams, TResult, TError>): state is ReduxHttpInitialState;
+export interface ReduxHttpFetchingState<TParams> {
+    fetchState: FETCH_STATE_FETCHING;
     params: TParams;
 }
+export declare function isFetchingStateFetching<TParams, TResult, TError>(state?: ReduxHttpRequestState<TParams, TResult, TError>): state is ReduxHttpFetchingState<TParams>;
 export interface ReduxHttpSuccessState<TParams, TResult> {
     fetchState: FETCH_STATE_SUCCESS;
     params: TParams;
     data: TResult;
 }
+export declare function isFetchingStateSuccess<TParams, TResult, TError>(state?: ReduxHttpRequestState<TParams, TResult, TError>): state is ReduxHttpSuccessState<TParams, TResult>;
 export interface ReduxHttpErrorState<TParams, TError> {
     fetchState: FETCH_STATE_ERROR;
     params: TParams;
     error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
 }
-export declare type ReduxHttpRequestState<TParams, TResult, TError> = ReduxHttpInitialState | ReduxHttpLoadingState<TParams> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TError>;
+export declare function isFetchingStateError<TParams, TResult, TError>(state?: ReduxHttpRequestState<TParams, TResult, TError>): state is ReduxHttpErrorState<TParams, TError>;
+export declare type ReduxHttpRequestState<TParams, TResult, TError> = ReduxHttpInitialState | ReduxHttpFetchingState<TParams> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TError>;
 /** Adds reducer method to HTTP request object. */
 export interface WithReducer<TParams, TResult, TError> {
     /**

@@ -27,9 +27,9 @@ export interface ReduxHttpMiddleware extends Middleware {
     /**
      * Registers rd-redux-http request in middleware and augment request object with redux integration methods.
      */
-    register<TParams, TResult, TError, TTransformed = TResult>(request: HttpRequest<TParams, TResult, TError>, transform?: (result: TResult) => TTransformed): ReduxHttpRequest<TParams, TTransformed, TError>;
+    register<TParams, TResult, TError, TTransformed = TResult>(request: HttpRequest<TParams, TResult, TError>, transform?: (result: TResult, params?: TParams) => TTransformed): ReduxHttpRequest<TParams, TTransformed, TError>;
     /**
      * Registers rd-redux-http request with body in middleware and augment request object with redux integration methods.
      */
-    register<TBody, TParams, TResult, TError, TTransformed = TResult>(request: HttpRequestWithBody<TBody, TParams, TResult, TError>, transform?: (result: TResult) => TTransformed): ReduxHttpRequestWithBody<TBody, TParams, TTransformed, TError>;
+    register<TBody, TParams, TResult, TError, TTransformed = TResult>(request: HttpRequestWithBody<TBody, TParams, TResult, TError>, transform?: (result: TResult, params?: TParams, body?: TBody) => TTransformed): ReduxHttpRequestWithBody<TBody, TParams, TTransformed, TError>;
 }

@@ -17,7 +17,7 @@ function createReducer(httpRequest) {
             };
         }
         if (httpRequest.actions.isRunning(action)) {
-            return __assign({}, state, { error: undefined, params: action.params, fetchState: _1.FETCH_STATE_LOADING });
+            return __assign({}, state, { error: undefined, params: action.params, fetchState: _1.FETCH_STATE_FETCHING });
         }
         if (httpRequest.actions.isOk(action)) {
             return __assign({}, state, { error: undefined, data: action.result, params: action.params, fetchState: _1.FETCH_STATE_SUCCESS });

@@ -2,7 +2,7 @@ import { Action } from "redux";
 
 import { HttpRequest } from "../http";
 import { ReduxHttpRequestState, ReduxHttpInitialState } from "./http-request-redux";
-import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from ".";
+import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from ".";
 
 export function createReducer<TParams, TResult, TError>(
     httpRequest: HttpRequest<TParams, TResult, TError>
@@ -22,7 +22,7 @@ export function createReducer<TParams, TResult, TError>(
                 ...state,
                 error: undefined,
                 params: action.params,
-                fetchState: FETCH_STATE_LOADING
+                fetchState: FETCH_STATE_FETCHING
             } as any;
         }
 

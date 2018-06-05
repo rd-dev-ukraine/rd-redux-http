@@ -1,14 +1,26 @@
 import { Action } from "redux";
 import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
-import { FETCH_STATE_INITIAL, FETCH_STATE_LOADING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
+import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
 
 export interface ReduxHttpInitialState {
     fetchState: FETCH_STATE_INITIAL;
 }
 
-export interface ReduxHttpLoadingState<TParams> {
-    fetchState: FETCH_STATE_LOADING;
+export function isFetchingStateInitial<TParams, TResult, TError>(
+    state?: ReduxHttpRequestState<TParams, TResult, TError>
+): state is ReduxHttpInitialState {
+    return !!state && state.fetchState === FETCH_STATE_INITIAL;
+}
+
+export interface ReduxHttpFetchingState<TParams> {
+    fetchState: FETCH_STATE_FETCHING;
     params: TParams;
+}
+
+export function isFetchingStateFetching<TParams, TResult, TError>(
+    state?: ReduxHttpRequestState<TParams, TResult, TError>
+): state is ReduxHttpFetchingState<TParams> {
+    return !!state && state.fetchState === FETCH_STATE_FETCHING;
 }
 
 export interface ReduxHttpSuccessState<TParams, TResult> {
@@ -17,15 +29,27 @@ export interface ReduxHttpSuccessState<TParams, TResult> {
     data: TResult;
 }
 
+export function isFetchingStateSuccess<TParams, TResult, TError>(
+    state?: ReduxHttpRequestState<TParams, TResult, TError>
+): state is ReduxHttpSuccessState<TParams, TResult> {
+    return !!state && state.fetchState === FETCH_STATE_SUCCESS;
+}
+
 export interface ReduxHttpErrorState<TParams, TError> {
     fetchState: FETCH_STATE_ERROR;
     params: TParams;
     error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
 }
 
+export function isFetchingStateError<TParams, TResult, TError>(
+    state?: ReduxHttpRequestState<TParams, TResult, TError>
+): state is ReduxHttpErrorState<TParams, TError> {
+    return !!state && state.fetchState === FETCH_STATE_ERROR;
+}
+
 export type ReduxHttpRequestState<TParams, TResult, TError> =
     | ReduxHttpInitialState
-    | ReduxHttpLoadingState<TParams>
+    | ReduxHttpFetchingState<TParams>
     | ReduxHttpSuccessState<TParams, TResult>
     | ReduxHttpErrorState<TParams, TError>;
 
