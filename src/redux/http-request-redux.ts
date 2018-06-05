@@ -55,6 +55,25 @@ export type ReduxHttpRequestState<TParams, TResult, TError> =
     | ReduxHttpSuccessState<TParams, TResult>
     | ReduxHttpErrorState<TParams, TResult, TError>;
 
+/**
+ * Type guard checks if state contains non-emtpy data value.
+ */
+export function hasFetchingData<TParams, TResult, TError>(
+    state?: ReduxHttpRequestState<TParams, TResult, TError> | any
+): state is { data: TResult } {
+    return !!state && state.fetchState !== FETCH_STATE_INITIAL && !!state.data;
+}
+
+/**
+ * If state object contains non-empty data, returns that value, otherwise return default data value.
+ */
+export function getFetchingDataOrDefault<TParams, TResult, TError>(
+    state: ReduxHttpRequestState<TParams, TResult, TError>,
+    defaultData: TResult
+): TResult {
+    return hasFetchingData(state) ? state.data || defaultData : defaultData;
+}
+
 /** Adds reducer method to HTTP request object. */
 export interface WithReducer<TParams, TResult, TError> {
     /**
