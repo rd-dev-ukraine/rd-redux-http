@@ -14,4 +14,4 @@ export interface CalculateCommonStateOptions {
 /**
  * Calculates common state from a set of states.
  */
-export declare function calculateCommonState(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE;
+export declare function composeFetchingState(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE;

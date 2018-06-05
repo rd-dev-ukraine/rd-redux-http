@@ -12,14 +12,15 @@ export function isFetchingStateInitial<TParams, TResult, TError>(
     return !!state && state.fetchState === FETCH_STATE_INITIAL;
 }
 
-export interface ReduxHttpFetchingState<TParams> {
+export interface ReduxHttpFetchingState<TParams, TResult> {
     fetchState: FETCH_STATE_FETCHING;
     params: TParams;
+    data?: TResult;
 }
 
 export function isFetchingStateFetching<TParams, TResult, TError>(
     state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpFetchingState<TParams> {
+): state is ReduxHttpFetchingState<TParams, TResult> {
     return !!state && state.fetchState === FETCH_STATE_FETCHING;
 }
 
@@ -35,23 +36,24 @@ export function isFetchingStateSuccess<TParams, TResult, TError>(
     return !!state && state.fetchState === FETCH_STATE_SUCCESS;
 }
 
-export interface ReduxHttpErrorState<TParams, TError> {
+export interface ReduxHttpErrorState<TParams, TResult, TError> {
     fetchState: FETCH_STATE_ERROR;
     params: TParams;
     error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
+    data?: TResult;
 }
 
 export function isFetchingStateError<TParams, TResult, TError>(
     state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpErrorState<TParams, TError> {
+): state is ReduxHttpErrorState<TParams, TResult, TError> {
     return !!state && state.fetchState === FETCH_STATE_ERROR;
 }
 
 export type ReduxHttpRequestState<TParams, TResult, TError> =
     | ReduxHttpInitialState
-    | ReduxHttpFetchingState<TParams>
+    | ReduxHttpFetchingState<TParams, TResult>
     | ReduxHttpSuccessState<TParams, TResult>
-    | ReduxHttpErrorState<TParams, TError>;
+    | ReduxHttpErrorState<TParams, TResult, TError>;
 
 /** Adds reducer method to HTTP request object. */
 export interface WithReducer<TParams, TResult, TError> {

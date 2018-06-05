@@ -7,7 +7,7 @@ exports.FETCH_STATE_ERROR = "error";
 /**
  * Calculates common state from a set of states.
  */
-function calculateCommonState(state, options) {
+function composeFetchingState(state, options) {
     options = options || {
         waitForLoadingOnError: false
     };
@@ -30,5 +30,5 @@ function calculateCommonState(state, options) {
     }
     return exports.FETCH_STATE_SUCCESS;
 }
-exports.calculateCommonState = calculateCommonState;
+exports.composeFetchingState = composeFetchingState;
 //# sourceMappingURL=fetch-state.js.map

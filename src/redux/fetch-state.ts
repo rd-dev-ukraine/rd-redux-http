@@ -20,7 +20,7 @@ export interface CalculateCommonStateOptions {
 /**
  * Calculates common state from a set of states.
  */
-export function calculateCommonState(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE {
+export function composeFetchingState(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE {
     options = options || {
         waitForLoadingOnError: false
     };
