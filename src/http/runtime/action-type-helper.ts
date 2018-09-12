@@ -27,6 +27,16 @@ export function parseActionType(actionType: string): MatchActionInfo | { isMatch
     };
 }
 
-export function formatActionType(requestId: string, operation: OperationType, method: string, urlTemplate: string): string {
-    return `RD-REDUX-HTTP [${requestId}] ${operation.toUpperCase()} ${method.toUpperCase()} ${urlTemplate}`;
+export function formatActionType<TParams>(
+    requestId: string,
+    name: string,
+    operation: OperationType,
+    method: string,
+    urlTemplate: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>)
+): string {
+    return `RD-REDUX-HTTP [${requestId}]${
+        name ? " [" + name + "] " : " "
+    }${operation.toUpperCase()} ${method.toUpperCase()} ${
+        typeof urlTemplate === "function" ? "<dynamic url>" : urlTemplate
+    }`;
 }

@@ -2,21 +2,24 @@
 import { HttpResult } from "./result";
 import { ActionFactory, MakeRequestActionFactory, MakeRequestWithBodyActionFactory } from "./actions";
 
-export interface HttpRequestBasicInfo {
+export interface HttpRequestBasicInfo<TParams> {
     /** HTTP method (verb) of the request. */
     method: string;
+
     /** URL template for the request. */
-    urlTemplate: string;
+    urlTemplate: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>);
 
     /** Unique request identifier. */
     id: string;
+
+    /** User-defined request name. */
+    requestName: string;
 }
 
 /**
  * Allows to run configured HTTP request.
  */
-export interface HttpRequest<TParams, TResult, TError>
-    extends HttpRequestBasicInfo {
+export interface HttpRequest<TParams, TResult, TError> extends HttpRequestBasicInfo<TParams> {
     /**
      * Runs HTTP request with specified parameters.
      * @param params Parameters for HTTP request.
@@ -39,8 +42,7 @@ export interface HttpRequest<TParams, TResult, TError>
 /**
  * Allows to run configured HTTP request.
  */
-export interface HttpRequestWithBody<TBody, TParams, TResult, TError>
-    extends HttpRequestBasicInfo {
+export interface HttpRequestWithBody<TBody, TParams, TResult, TError> extends HttpRequestBasicInfo<TParams> {
     /**
      * Runs HTTP request with specified parameters and body.
      * @param params Parameters for HTTP request.
@@ -95,7 +97,8 @@ export interface HttpRequestTypes<TParams, TResult, TError> {
  * Exposes properties which have types related to the request: params, result, errors etc.
  * Don't try to read values of the properties, use it with Typescript typeof operator only.
  */
-export interface HttpRequestWithBodyTypes<TBody, TParams, TResult, TError> extends HttpRequestTypes<TParams, TResult, TError> {
+export interface HttpRequestWithBodyTypes<TBody, TParams, TResult, TError>
+    extends HttpRequestTypes<TParams, TResult, TError> {
     /**
      * Type of request body.
      * Don't access value of the property, use it with Typescript typeof operator only.

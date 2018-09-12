@@ -17,8 +17,8 @@ function parseActionType(actionType) {
     };
 }
 exports.parseActionType = parseActionType;
-function formatActionType(requestId, operation, method, urlTemplate) {
-    return "RD-REDUX-HTTP [" + requestId + "] " + operation.toUpperCase() + " " + method.toUpperCase() + " " + urlTemplate;
+function formatActionType(requestId, name, operation, method, urlTemplate) {
+    return "RD-REDUX-HTTP [" + requestId + "]" + (name ? " [" + name + "] " : " ") + operation.toUpperCase() + " " + method.toUpperCase() + " " + (typeof urlTemplate === "function" ? "<dynamic url>" : urlTemplate);
 }
 exports.formatActionType = formatActionType;
 //# sourceMappingURL=action-type-helper.js.map

@@ -5,8 +5,9 @@ var runtime_1 = require("../runtime");
 var EntryPoint = /** @class */ (function () {
     function EntryPoint() {
     }
-    EntryPoint.prototype.fetch = function (method, urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.fetch = function (method, urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
+        if (name === void 0) { name = ""; }
         if (!method) {
             throw new Error("HTTP verb is not defined.");
         }
@@ -15,6 +16,7 @@ var EntryPoint = /** @class */ (function () {
         }
         var config = {
             method: method,
+            name: name,
             urlTemplate: urlTemplate,
             appendRestOfParamsToQueryString: appendRestOfParamsToQueryString,
             convertResult: undefined,
@@ -24,25 +26,30 @@ var EntryPoint = /** @class */ (function () {
         };
         return new RequestConfigurator(config);
     };
-    EntryPoint.prototype.get = function (urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.get = function (urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
-        return this.fetch("GET", urlTemplate, appendRestOfParamsToQueryString);
+        if (name === void 0) { name = ""; }
+        return this.fetch("GET", urlTemplate, appendRestOfParamsToQueryString, name);
     };
-    EntryPoint.prototype.post = function (urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.post = function (urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
-        return this.fetch("POST", urlTemplate, appendRestOfParamsToQueryString);
+        if (name === void 0) { name = ""; }
+        return this.fetch("POST", urlTemplate, appendRestOfParamsToQueryString, name);
     };
-    EntryPoint.prototype.put = function (urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.put = function (urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
-        return this.fetch("PUT", urlTemplate, appendRestOfParamsToQueryString);
+        if (name === void 0) { name = ""; }
+        return this.fetch("PUT", urlTemplate, appendRestOfParamsToQueryString, name);
     };
-    EntryPoint.prototype.patch = function (urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.patch = function (urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
-        return this.fetch("PATCH", urlTemplate, appendRestOfParamsToQueryString);
+        if (name === void 0) { name = ""; }
+        return this.fetch("PATCH", urlTemplate, appendRestOfParamsToQueryString, name);
     };
-    EntryPoint.prototype.delete = function (urlTemplate, appendRestOfParamsToQueryString) {
+    EntryPoint.prototype.delete = function (urlTemplate, appendRestOfParamsToQueryString, name) {
         if (appendRestOfParamsToQueryString === void 0) { appendRestOfParamsToQueryString = false; }
-        return this.fetch("DELETE", urlTemplate, appendRestOfParamsToQueryString);
+        if (name === void 0) { name = ""; }
+        return this.fetch("DELETE", urlTemplate, appendRestOfParamsToQueryString, name);
     };
     return EntryPoint;
 }());
@@ -79,7 +86,6 @@ var RequestConfigurator = /** @class */ (function () {
     };
     RequestConfigurator.prototype.customBody = function () {
         return new RequestWithBodyConfigurator(this.config);
-        ;
     };
     RequestConfigurator.prototype.pre = function (prepareRequest) {
         if (!prepareRequest) {

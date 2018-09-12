@@ -15,47 +15,56 @@ import { ReduxHttpRequestState } from "../../redux/http-request-redux";
 
 let counter = 1;
 
-
-export function createHttpRequest<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): HttpRequestWithBody<TBody, TParams, TResult, TError> {
-    const result = ((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
-
+export function createHttpRequest<TBody, TParams, TResult, TError>(
+    config: HttpRequestConfig<TBody, TParams, TResult, TError>
+): HttpRequestWithBody<TBody, TParams, TResult, TError> {
+    const result = (((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
         const url = urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
-        const request = (config.pre || []).reduce(
-            (request, pre) => pre(request, params, body),
-            new Request(url, {
-                method: config.method
-            }));
 
-        const actualFetch: typeof config.fetch = config.fetch || ((request: Request, params: TParams, body: TBody) => fetch(request));
-        const processResponse = config.processResponse || (defaultProcessResponseFactory(config));
+        return url.then(url => {
+            const request = (config.pre || []).reduce(
+                (request, pre) => pre(request, params, body),
+                new Request(url, {
+                    method: config.method
+                })
+            );
 
-        return actualFetch(request, params, body).then(
-            response => processResponse(response, params, body),
-            error => Promise.resolve<TransportErrorResult>({
-                ok: false,
-                errorType: "transport",
-                reason: "fetch-rejected",
-                error
-            }));
+            const actualFetch: typeof config.fetch =
+                config.fetch || ((request: Request, params: TParams, body: TBody) => fetch(request));
+            const processResponse = config.processResponse || defaultProcessResponseFactory(config);
 
-    }) as any as HttpRequestWithBody<TBody, TParams, TResult, TError>;
+            return actualFetch(request, params, body).then(
+                response => processResponse(response, params, body),
+                error =>
+                    Promise.resolve<TransportErrorResult>({
+                        ok: false,
+                        errorType: "transport",
+                        reason: "fetch-rejected",
+                        error
+                    })
+            );
+        });
+    }) as any) as HttpRequestWithBody<TBody, TParams, TResult, TError>;
 
     result.id = `${counter++}`;
-    result.actions = createActions(result.id, config.method, config.urlTemplate);
+    result.actions = createActions(result.id, config.method, config.urlTemplate, config.name);
     result.types = new HttpTypes<TBody, TParams, TResult, TError>();
     result.method = config.method;
     result.urlTemplate = config.urlTemplate;
+    result.requestName = config.name;
 
     return result;
 }
 
-function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: HttpRequestConfig<TBody, TParams, TResult, TError>): typeof config.processResponse {
+function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(
+    config: HttpRequestConfig<TBody, TParams, TResult, TError>
+): typeof config.processResponse {
     const convertResult = config.convertResult || ((response: Response) => response.clone().json());
 
     return (response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
         if (response.ok || response.status === 400) {
-            return convertResult(response.clone(), response.ok, params)
-                .then(parsed => {
+            return convertResult(response.clone(), response.ok, params).then(
+                parsed => {
                     if (response.ok) {
                         const result: OkResult<TResult> = {
                             ok: true,
@@ -72,23 +81,25 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
 
                         return error;
                     }
-                }, err => Promise.resolve<TransportErrorResult>({
-                    ok: false,
-                    errorType: "transport",
-                    reason: "invalid-body",
-                    statusCode: response.status,
-                    error: err
-                }));
+                },
+                err =>
+                    Promise.resolve<TransportErrorResult>({
+                        ok: false,
+                        errorType: "transport",
+                        reason: "invalid-body",
+                        statusCode: response.status,
+                        error: err
+                    })
+            );
         } else {
             if (response.status === 401 || response.status === 403) {
                 const errorResult: AuthorizationErrorResult = {
                     ok: false,
                     errorType: "authorization",
                     status: response.status
-                }
+                };
 
                 return Promise.resolve(errorResult);
-
             } else {
                 const errorResult: TransportErrorResult = {
                     ok: false,
@@ -101,14 +112,26 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(config: 
                 return Promise.resolve(errorResult);
             }
         }
-    }
+    };
 }
 
 class HttpTypes<TBody, TParams, TResult, TError> implements HttpRequestWithBodyTypes<TBody, TParams, TResult, TError> {
-    get params(): TParams { throw new Error("Use this in Typescript typeof expression only."); }
-    get okResult(): TResult { throw new Error("Use this in Typescript typeof expression only."); }
-    get errorResult(): TError { throw new Error("Use this in Typescript typeof expression only."); }
-    get response(): HttpResult<TResult, TError> { throw new Error("Use this in Typescript typeof expression only."); }
-    get body(): TBody { throw new Error("Use this in Typescript typeof construct"); }
-    get reduxState(): ReduxHttpRequestState<TParams, TResult, TError> { throw new Error("Use this in Typescript typeof expression only."); }
+    get params(): TParams {
+        throw new Error("Use this in Typescript typeof expression only.");
+    }
+    get okResult(): TResult {
+        throw new Error("Use this in Typescript typeof expression only.");
+    }
+    get errorResult(): TError {
+        throw new Error("Use this in Typescript typeof expression only.");
+    }
+    get response(): HttpResult<TResult, TError> {
+        throw new Error("Use this in Typescript typeof expression only.");
+    }
+    get body(): TBody {
+        throw new Error("Use this in Typescript typeof construct");
+    }
+    get reduxState(): ReduxHttpRequestState<TParams, TResult, TError> {
+        throw new Error("Use this in Typescript typeof expression only.");
+    }
 }

@@ -11,20 +11,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var querystring = require("querystring");
 var paramRegex = /:[A-Za-z]\w{1,}/g;
 function urlFromParams(urlTemplate, appendRestToQueryString, params) {
-    var p = __assign({}, (params || {}));
-    var url = urlTemplate.replace(paramRegex, function (match) {
-        match = match.replace(/[:()]/g, "");
-        var value = encodeURIComponent(p[match] || "");
-        delete p[match];
-        return "" + value;
-    });
-    if (appendRestToQueryString) {
-        var qs = querystring.stringify(p).trim();
-        if (qs) {
-            return url.indexOf("?") === -1 ? url + "?" + qs : url + "&" + qs;
+    return Promise.resolve(typeof urlTemplate === "function" ? urlTemplate(params) : urlTemplate).then(function (urlTemplate) {
+        var p = __assign({}, (params || {}));
+        var url = urlTemplate.replace(paramRegex, function (match) {
+            match = match.replace(/[:()]/g, "");
+            var value = encodeURIComponent(p[match] || "");
+            delete p[match];
+            return "" + value;
+        });
+        if (appendRestToQueryString) {
+            var qs = querystring.stringify(p).trim();
+            if (qs) {
+                return url.indexOf("?") === -1 ? url + "?" + qs : url + "&" + qs;
+            }
         }
-    }
-    return url;
+        return url;
+    });
 }
 exports.urlFromParams = urlFromParams;
 //# sourceMappingURL=url-builder.js.map

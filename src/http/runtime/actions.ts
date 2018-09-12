@@ -17,36 +17,55 @@ import {
     MakeRequestActionFactory,
     MakeRequestWithBodyActionFactory,
     TriggerRequestAction,
-    TriggerRequestWithBodyAction,
+    TriggerRequestWithBodyAction
 } from "../api";
 
 import { formatActionType, parseActionType, MatchActionInfo, OperationType } from "./action-type-helper";
 
-
-export function createActions<TParams, TResult, TError, TBody=undefined>(id: string, method: string, url: string): ActionFactory<TParams, TResult, TError> & MakeRequestActionFactory<TParams> & MakeRequestWithBodyActionFactory<TParams, TBody> {
-    return new ActionFactoryImpl(id, method, url);
+export function createActions<TParams, TResult, TError, TBody = undefined>(
+    id: string,
+    method: string,
+    url: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>),
+    name: string
+): ActionFactory<TParams, TResult, TError> &
+    MakeRequestActionFactory<TParams> &
+    MakeRequestWithBodyActionFactory<TParams, TBody> {
+    return new ActionFactoryImpl(id, method, url, name);
 }
 
-class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
-    ActionFactory<TParams, TResult, TError>,
-    MakeRequestActionFactory<TParams>,
-    MakeRequestWithBodyActionFactory<TParams, TBody> {
-
+class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined>
+    implements
+        ActionFactory<TParams, TResult, TError>,
+        MakeRequestActionFactory<TParams>,
+        MakeRequestWithBodyActionFactory<TParams, TBody> {
     types: ActionTypes<TParams, TResult, TError> = {
-        get params(): TParams { throw new Error("Use this with Typescript typeof operator only"); },
-        get result(): TResult { throw new Error("Use this with Typescript typeof operator only"); },
-        get error(): TError { throw new Error("Use this with Typescript typeof operator only"); },
+        get params(): TParams {
+            throw new Error("Use this with Typescript typeof operator only");
+        },
+        get result(): TResult {
+            throw new Error("Use this with Typescript typeof operator only");
+        },
+        get error(): TError {
+            throw new Error("Use this with Typescript typeof operator only");
+        },
 
-        get runningAction(): RequestRunningAction<TParams> { throw new Error("Use this with Typescript typeof operator only"); },
-        get okAction(): OkResultAction<TParams, TResult> { throw new Error("Use this with Typescript typeof operator only"); },
-        get errorAction(): ErrorResultAction<TParams, TError> { throw new Error("Use this with Typescript typeof operator only"); },
+        get runningAction(): RequestRunningAction<TParams> {
+            throw new Error("Use this with Typescript typeof operator only");
+        },
+        get okAction(): OkResultAction<TParams, TResult> {
+            throw new Error("Use this with Typescript typeof operator only");
+        },
+        get errorAction(): ErrorResultAction<TParams, TError> {
+            throw new Error("Use this with Typescript typeof operator only");
+        }
     };
 
     constructor(
         public requestId: string,
         private method: string,
-        private url: string) {
-    }
+        private url: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>),
+        private name: string
+    ) {}
 
     isMy(action?: Action): action is ReduxHttpLifecycleActionBase<TParams> {
         const match = this.match(action);
@@ -55,24 +74,17 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
 
     isRunning(action?: Action): action is RequestRunningAction<TParams> {
         const match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "running";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "running";
     }
 
     isOk(action?: Action): action is OkResultAction<TParams, TResult> {
         const match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "ok";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "ok";
     }
-
 
     isError(action?: Action): action is ErrorResultAction<TParams, TError> {
         const match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "error";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "error";
     }
 
     isErrorResponse(action?: Action): action is ErrorResponseAction<TParams, TError> {
@@ -81,13 +93,11 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
 
     isAuthorizationError(action?: Action): action is AuthorizationErrorResultAction<TParams> {
         return this.isError(action) && action.errorType === "authorization";
-
     }
 
     isTransportError(action?: Action): action is TransportErrorResultAction<TParams> {
         return this.isError(action) && action.errorType === "transport";
     }
-
 
     isCompleted(action?: Action): action is OkResultAction<TParams, TResult> | ErrorResultAction<TParams, TError> {
         return this.isOk(action) || this.isError(action);
@@ -104,11 +114,14 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
         return {
             ...result,
             type: this.actionType("ok"),
-            params,
+            params
         };
     }
 
-    error(params: TParams, error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult): ErrorResultAction<TParams, TError> {
+    error(
+        params: TParams,
+        error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult
+    ): ErrorResultAction<TParams, TError> {
         return {
             type: this.actionType("error"),
             params,
@@ -148,6 +161,6 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined> implements
     }
 
     protected actionType(operation: OperationType): string {
-        return formatActionType(this.requestId, operation, this.method, this.url);
+        return formatActionType(this.requestId, this.name, operation, this.method, this.url);
     }
 }

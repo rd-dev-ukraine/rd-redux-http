@@ -11,15 +11,19 @@ import {
     HttpRequestWithBodyBuilder,
     HttpRequest,
     HttpRequestWithBody,
-    HttpResult
+    HttpResult,
+    UrlTemplate
 } from "../api";
 
 import { createHttpRequest } from "../runtime";
 
-
 class EntryPoint implements HttpRequestEntryPoint {
-
-    fetch<TParams = {}>(method: string, urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
+    fetch<TParams = {}>(
+        method: string,
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name: string = ""
+    ): HttpRequestConfigurator<TParams> {
         if (!method) {
             throw new Error("HTTP verb is not defined.");
         }
@@ -29,6 +33,7 @@ class EntryPoint implements HttpRequestEntryPoint {
 
         const config: HttpRequestConfig<any, TParams, any, any> = {
             method,
+            name,
             urlTemplate,
             appendRestOfParamsToQueryString,
 
@@ -41,29 +46,48 @@ class EntryPoint implements HttpRequestEntryPoint {
         return new RequestConfigurator<TParams>(config);
     }
 
-    get<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
-        return this.fetch("GET", urlTemplate, appendRestOfParamsToQueryString);
+    get<TParams = {}>(
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name = ""
+    ): HttpRequestConfigurator<TParams> {
+        return this.fetch("GET", urlTemplate, appendRestOfParamsToQueryString, name);
     }
 
-    post<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
-        return this.fetch("POST", urlTemplate, appendRestOfParamsToQueryString);
+    post<TParams = {}>(
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name = ""
+    ): HttpRequestConfigurator<TParams> {
+        return this.fetch("POST", urlTemplate, appendRestOfParamsToQueryString, name);
     }
 
-    put<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
-        return this.fetch("PUT", urlTemplate, appendRestOfParamsToQueryString);
+    put<TParams = {}>(
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name = ""
+    ): HttpRequestConfigurator<TParams> {
+        return this.fetch("PUT", urlTemplate, appendRestOfParamsToQueryString, name);
     }
 
-    patch<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
-        return this.fetch("PATCH", urlTemplate, appendRestOfParamsToQueryString);
+    patch<TParams = {}>(
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name = ""
+    ): HttpRequestConfigurator<TParams> {
+        return this.fetch("PATCH", urlTemplate, appendRestOfParamsToQueryString, name);
     }
 
-    delete<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString = false): HttpRequestConfigurator<TParams> {
-        return this.fetch("DELETE", urlTemplate, appendRestOfParamsToQueryString);
+    delete<TParams = {}>(
+        urlTemplate: UrlTemplate<TParams>,
+        appendRestOfParamsToQueryString = false,
+        name = ""
+    ): HttpRequestConfigurator<TParams> {
+        return this.fetch("DELETE", urlTemplate, appendRestOfParamsToQueryString, name);
     }
 }
 
 class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
-
     constructor(private config: HttpRequestConfig<any, TParams, any, any>) {
         if (!config) {
             throw new Error("Configuration object is missing.");
@@ -101,7 +125,7 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
     }
 
     customBody<TBody>(): HttpRequestConfiguratorWithBody<TBody, TParams> {
-        return new RequestWithBodyConfigurator<TBody, TParams>(this.config);;
+        return new RequestWithBodyConfigurator<TBody, TParams>(this.config);
     }
 
     pre(prepareRequest: PrepareRequestFunction<TParams>): this {
@@ -122,7 +146,9 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         return this;
     }
 
-    processResponse<TResult, TError>(processor: (response: Response, params: TParams) => Promise<HttpResult<TResult, TError>>): HttpRequestBuilder<TParams, TResult, TError> {
+    processResponse<TResult, TError>(
+        processor: (response: Response, params: TParams) => Promise<HttpResult<TResult, TError>>
+    ): HttpRequestBuilder<TParams, TResult, TError> {
         if (!processor) {
             throw new Error("Processor function is not defined.");
         }
@@ -136,7 +162,9 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         return new RequestBuilder<TParams, TResult, TError>(this.config);
     }
 
-    convertResult<TResult, TError=any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestBuilder<TParams, TResult, TError> {
+    convertResult<TResult, TError = any>(
+        converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>
+    ): HttpRequestBuilder<TParams, TResult, TError> {
         if (!converter) {
             throw new Error("Coversion function is not defined.");
         }
@@ -145,7 +173,6 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
 
         return new RequestBuilder<TParams, TResult, TError>(this.config);
     }
-
 }
 
 class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfiguratorWithBody<TBody, TParams> {
@@ -173,7 +200,9 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
         return this;
     }
 
-    processResponse<TResult, TError>(processor: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+    processResponse<TResult, TError>(
+        processor: (response: Response, params: TParams, body: TBody) => Promise<HttpResult<TResult, TError>>
+    ): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
         if (!processor) {
             throw new Error("Processor function is not defined.");
         }
@@ -187,7 +216,9 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
         return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
     }
 
-    convertResult<TResult, TError=any>(converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+    convertResult<TResult, TError = any>(
+        converter: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>
+    ): HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
         if (!converter) {
             throw new Error("Coversion function is not defined.");
         }
@@ -196,7 +227,6 @@ class RequestWithBodyConfigurator<TBody, TParams> implements HttpRequestConfigur
 
         return new RequestWithBodyBuilder<TBody, TParams, TResult, TError>(this.config);
     }
-
 }
 
 class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TParams, TResult, TError> {
@@ -211,7 +241,8 @@ class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TPa
     }
 }
 
-class RequestWithBodyBuilder<TBody, TParams, TResult, TError> implements HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+class RequestWithBodyBuilder<TBody, TParams, TResult, TError>
+    implements HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
     constructor(private config: HttpRequestConfig<TBody, TParams, TResult, TError>) {
         if (!config) {
             throw new Error("Configuration object is missing.");

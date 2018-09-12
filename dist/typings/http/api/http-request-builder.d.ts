@@ -2,9 +2,12 @@ import { HttpRequest, HttpRequestWithBody } from "./http-request";
 import { HttpResult } from "./result";
 export declare type PrepareRequestFunction<TParams> = (request: Request, params: TParams) => Request;
 export declare type PrepareRequestWithBodyFunction<TBody, TParams> = (request: Request, params: TParams, body: TBody) => Request;
+export declare type UrlTemplate<TParams> = string | ((params: TParams) => string) | ((params: TParams) => Promise<string>);
 export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
+    /** Optional request name, could be used for identify request in redux dev tools if URL is function. */
+    name: string;
     /** URL with parameter substitutions */
-    urlTemplate: string;
+    urlTemplate: UrlTemplate<TParams>;
     /** True if values from params object not used in URL will be appended as query string. */
     appendRestOfParamsToQueryString: boolean;
     method: string;
@@ -31,50 +34,56 @@ export interface HttpRequestEntryPoint {
      * @param method HTTP verb for new request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.
      */
-    fetch<TParams = {}>(method: string, urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    fetch<TParams = {}>(method: string, urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
     /**
      * Creates GET request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.s
      */
-    get<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    get<TParams = {}>(urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
     /**
      * Creates POST request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.s
      */
-    post<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    post<TParams = {}>(urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
     /**
      * Creates PUT request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.s
      */
-    put<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    put<TParams = {}>(urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
     /**
      * Creates PATCH request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.s
      */
-    patch<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    patch<TParams = {}>(urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
     /**
      * Creates DELETE request.
      * @param urlTemplate Url template with parameters (defined as :parameterName).
      * @param [appendRestOfParamsToQueryString] If true than all parameters are not used in URL will be append as name-values pairs to query string.
+     * @param [name] Optional request name to be used to identify request in redux dev tools  in case if urlTemplate is function.
      *
      * @returns An object allows to continue configuring HTTP request.s
      */
-    delete<TParams = {}>(urlTemplate: string, appendRestOfParamsToQueryString?: boolean): HttpRequestConfigurator<TParams>;
+    delete<TParams = {}>(urlTemplate: UrlTemplate<TParams>, appendRestOfParamsToQueryString?: boolean, name?: string): HttpRequestConfigurator<TParams>;
 }
 /**
  * Allows to configure HTTP request.

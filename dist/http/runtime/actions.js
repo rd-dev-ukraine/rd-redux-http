@@ -9,22 +9,35 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var action_type_helper_1 = require("./action-type-helper");
-function createActions(id, method, url) {
-    return new ActionFactoryImpl(id, method, url);
+function createActions(id, method, url, name) {
+    return new ActionFactoryImpl(id, method, url, name);
 }
 exports.createActions = createActions;
 var ActionFactoryImpl = /** @class */ (function () {
-    function ActionFactoryImpl(requestId, method, url) {
+    function ActionFactoryImpl(requestId, method, url, name) {
         this.requestId = requestId;
         this.method = method;
         this.url = url;
+        this.name = name;
         this.types = {
-            get params() { throw new Error("Use this with Typescript typeof operator only"); },
-            get result() { throw new Error("Use this with Typescript typeof operator only"); },
-            get error() { throw new Error("Use this with Typescript typeof operator only"); },
-            get runningAction() { throw new Error("Use this with Typescript typeof operator only"); },
-            get okAction() { throw new Error("Use this with Typescript typeof operator only"); },
-            get errorAction() { throw new Error("Use this with Typescript typeof operator only"); },
+            get params() {
+                throw new Error("Use this with Typescript typeof operator only");
+            },
+            get result() {
+                throw new Error("Use this with Typescript typeof operator only");
+            },
+            get error() {
+                throw new Error("Use this with Typescript typeof operator only");
+            },
+            get runningAction() {
+                throw new Error("Use this with Typescript typeof operator only");
+            },
+            get okAction() {
+                throw new Error("Use this with Typescript typeof operator only");
+            },
+            get errorAction() {
+                throw new Error("Use this with Typescript typeof operator only");
+            }
         };
     }
     ActionFactoryImpl.prototype.isMy = function (action) {
@@ -33,21 +46,15 @@ var ActionFactoryImpl = /** @class */ (function () {
     };
     ActionFactoryImpl.prototype.isRunning = function (action) {
         var match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "running";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "running";
     };
     ActionFactoryImpl.prototype.isOk = function (action) {
         var match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "ok";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "ok";
     };
     ActionFactoryImpl.prototype.isError = function (action) {
         var match = this.match(action);
-        return match.isMatch &&
-            match.requestId === this.requestId &&
-            match.operation === "error";
+        return match.isMatch && match.requestId === this.requestId && match.operation === "error";
     };
     ActionFactoryImpl.prototype.isErrorResponse = function (action) {
         return this.isError(action) && action.errorType === "response";
@@ -99,7 +106,7 @@ var ActionFactoryImpl = /** @class */ (function () {
         return action_type_helper_1.parseActionType(action.type || "");
     };
     ActionFactoryImpl.prototype.actionType = function (operation) {
-        return action_type_helper_1.formatActionType(this.requestId, operation, this.method, this.url);
+        return action_type_helper_1.formatActionType(this.requestId, this.name, operation, this.method, this.url);
     };
     return ActionFactoryImpl;
 }());

@@ -7,4 +7,4 @@ export interface MatchActionInfo {
 export declare function parseActionType(actionType: string): MatchActionInfo | {
     isMatch: false;
 };
-export declare function formatActionType(requestId: string, operation: OperationType, method: string, urlTemplate: string): string;
+export declare function formatActionType<TParams>(requestId: string, name: string, operation: OperationType, method: string, urlTemplate: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>)): string;
