@@ -94,6 +94,13 @@ var RequestConfigurator = /** @class */ (function () {
         this.config.pre.push(prepareRequest);
         return this;
     };
+    RequestConfigurator.prototype.prepareParams = function (paramsConverter) {
+        if (!paramsConverter) {
+            throw new Error("Params converter is not defined");
+        }
+        this.config.prepareParams = paramsConverter;
+        return this;
+    };
     RequestConfigurator.prototype.withFetch = function (customFetch) {
         if (!customFetch) {
             throw new Error("Custom fetch function is not defined.");

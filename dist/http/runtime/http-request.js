@@ -5,6 +5,7 @@ var url_builder_1 = require("./url-builder");
 var counter = 1;
 function createHttpRequest(config) {
     var result = (function (params, body) {
+        params = config.prepareParams ? config.prepareParams(params) : params;
         var url = url_builder_1.urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
         return url.then(function (url) {
             var request = (config.pre || []).reduce(function (request, pre) { return pre(request, params, body); }, new Request(url, {

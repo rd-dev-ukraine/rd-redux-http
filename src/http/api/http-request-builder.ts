@@ -22,6 +22,8 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
 
     method: string;
 
+    prepareParams?: (params: TParams) => any;
+
     /** An array of functions alters the initial request. */
     pre: PrepareRequestWithBodyFunction<TBody, TParams>[];
 
@@ -136,6 +138,11 @@ export interface HttpRequestEntryPoint {
  * Allows to configure HTTP request.
  */
 export interface HttpRequestConfigurator<TParams> {
+    /**
+     * Converts params object before building an final URL.
+     */
+    prepareParams(paramsConverter: (params: TParams) => any): this;
+
     /**
      * Configures request as request with JSON body.
      *

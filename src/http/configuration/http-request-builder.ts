@@ -138,6 +138,16 @@ class RequestConfigurator<TParams> implements HttpRequestConfigurator<TParams> {
         return this;
     }
 
+    prepareParams(paramsConverter: (params: TParams) => any): this {
+        if (!paramsConverter) {
+            throw new Error("Params converter is not defined");
+        }
+
+        this.config.prepareParams = paramsConverter;
+
+        return this;
+    }
+
     withFetch(customFetch: (request: Request, params: TParams) => Promise<Response>): this {
         if (!customFetch) {
             throw new Error("Custom fetch function is not defined.");

@@ -19,6 +19,8 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(
     config: HttpRequestConfig<TBody, TParams, TResult, TError>
 ): HttpRequestWithBody<TBody, TParams, TResult, TError> {
     const result = (((params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
+        params = config.prepareParams ? config.prepareParams(params) : params;
+
         const url = urlFromParams(config.urlTemplate, config.appendRestOfParamsToQueryString, params);
 
         return url.then(url => {
