@@ -28,10 +28,10 @@ export interface CalculateCommonStateOptions {
 }
 
 export class FetchingState {
-    public static INITIAL: FETCH_STATE = FETCH_STATE_INITIAL;
-    public static FETCHING: FETCH_STATE = FETCH_STATE_FETCHING;
-    public static SUCCESS: FETCH_STATE = FETCH_STATE_SUCCESS;
-    public static ERROR: FETCH_STATE = FETCH_STATE_ERROR;
+    public static INITIAL: FETCH_STATE_INITIAL = FETCH_STATE_INITIAL;
+    public static FETCHING: FETCH_STATE_FETCHING = FETCH_STATE_FETCHING;
+    public static SUCCESS: FETCH_STATE_SUCCESS = FETCH_STATE_SUCCESS;
+    public static ERROR: FETCH_STATE_ERROR = FETCH_STATE_ERROR;
 
     public static compose(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE {
         options = options || {

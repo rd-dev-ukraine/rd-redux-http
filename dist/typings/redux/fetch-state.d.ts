@@ -14,10 +14,10 @@ export interface CalculateCommonStateOptions {
     waitForLoadingOnError: boolean;
 }
 export declare class FetchingState {
-    static INITIAL: FETCH_STATE;
-    static FETCHING: FETCH_STATE;
-    static SUCCESS: FETCH_STATE;
-    static ERROR: FETCH_STATE;
+    static INITIAL: FETCH_STATE_INITIAL;
+    static FETCHING: FETCH_STATE_FETCHING;
+    static SUCCESS: FETCH_STATE_SUCCESS;
+    static ERROR: FETCH_STATE_ERROR;
     static compose(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE;
     static isInitial: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpInitialState;
     static isFetching: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpFetchingState<TParams, TResult>;
