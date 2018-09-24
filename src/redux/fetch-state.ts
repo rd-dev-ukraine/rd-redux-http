@@ -34,9 +34,7 @@ export class FetchingState {
     public static ERROR: FETCH_STATE_ERROR = FETCH_STATE_ERROR;
 
     public static compose(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE {
-        options = options || {
-            waitForLoadingOnError: false
-        };
+        options = options || { waitForLoadingOnError: false };
 
         if (!state.length) {
             throw new Error("States are empty");
@@ -87,6 +85,10 @@ export class FetchingState {
     public static hasData = <TParams, TResult, TError>(
         state?: ReduxHttpRequestState<TParams, TResult, TError> | any
     ): state is { data: TResult } => !!state && state.fetchState !== FETCH_STATE_INITIAL && !!state.data;
+
+    public static hasParams = <TParams, TResult, TError>(
+        state?: ReduxHttpRequestState<TParams, TResult, TError> | any
+    ): state is { params: TParams } => !!state && state.fetchState !== FETCH_STATE_INITIAL;
 
     public static getDataOrDefault = <TParams, TResult, TError>(
         state: ReduxHttpRequestState<TParams, TResult, TError>,

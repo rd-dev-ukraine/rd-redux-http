@@ -27,6 +27,9 @@ export declare class FetchingState {
     static hasData: <TParams, TResult, TError>(state?: any) => state is {
         data: TResult;
     };
+    static hasParams: <TParams, TResult, TError>(state?: any) => state is {
+        params: TParams;
+    };
     static getDataOrDefault: <TParams, TResult, TError>(state: ReduxHttpRequestState<TParams, TResult, TError>, defaultData: TResult) => TResult;
     static fromAction: (action: Action, defaultState?: FETCH_STATE) => FETCH_STATE;
 }

@@ -9,9 +9,7 @@ var FetchingState = /** @class */ (function () {
     function FetchingState() {
     }
     FetchingState.compose = function (state, options) {
-        options = options || {
-            waitForLoadingOnError: false
-        };
+        options = options || { waitForLoadingOnError: false };
         if (!state.length) {
             throw new Error("States are empty");
         }
@@ -43,6 +41,7 @@ var FetchingState = /** @class */ (function () {
     FetchingState.isSuccess = function (state) { return !!state && state.fetchState === exports.FETCH_STATE_SUCCESS; };
     FetchingState.isError = function (state) { return !!state && state.fetchState === exports.FETCH_STATE_ERROR; };
     FetchingState.hasData = function (state) { return !!state && state.fetchState !== exports.FETCH_STATE_INITIAL && !!state.data; };
+    FetchingState.hasParams = function (state) { return !!state && state.fetchState !== exports.FETCH_STATE_INITIAL; };
     FetchingState.getDataOrDefault = function (state, defaultData) {
         return FetchingState.hasData(state) ? state.data || defaultData : defaultData;
     };
