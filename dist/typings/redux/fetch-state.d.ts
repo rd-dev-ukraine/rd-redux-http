@@ -1,3 +1,5 @@
+import { ReduxHttpRequestState, ReduxHttpInitialState, ReduxHttpFetchingState, ReduxHttpSuccessState, ReduxHttpErrorState } from "./http-request-redux";
+import { Action } from "redux";
 export declare const FETCH_STATE_INITIAL = "initial";
 export declare type FETCH_STATE_INITIAL = "initial";
 export declare const FETCH_STATE_FETCHING = "fetching";
@@ -11,7 +13,20 @@ export interface CalculateCommonStateOptions {
     /** If true common state would be loading if at least one state is loading and one is error. */
     waitForLoadingOnError: boolean;
 }
-/**
- * Calculates common state from a set of states.
- */
-export declare function composeFetchingState(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE;
+export declare class FetchingState {
+    static INITIAL: FETCH_STATE;
+    static FETCHING: FETCH_STATE;
+    static SUCCESS: FETCH_STATE;
+    static ERROR: FETCH_STATE;
+    static compose(state: FETCH_STATE[], options?: CalculateCommonStateOptions): FETCH_STATE;
+    static isInitial: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpInitialState;
+    static isFetching: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpFetchingState<TParams, TResult>;
+    static isInitialOrFetching: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult>;
+    static isSuccess: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpSuccessState<TParams, TResult>;
+    static isError: <TParams, TResult, TError>(state?: ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError> | undefined) => state is ReduxHttpErrorState<TParams, TResult, TError>;
+    static hasData: <TParams, TResult, TError>(state?: any) => state is {
+        data: TResult;
+    };
+    static getDataOrDefault: <TParams, TResult, TError>(state: ReduxHttpRequestState<TParams, TResult, TError>, defaultData: TResult) => TResult;
+    static fromAction: (action: Action, defaultState?: FETCH_STATE) => FETCH_STATE;
+}

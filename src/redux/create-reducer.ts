@@ -1,8 +1,8 @@
 import { Action } from "redux";
 
-import { HttpRequest, anyRequest } from "../http";
+import { HttpRequest } from "../http";
 import { ReduxHttpRequestState, ReduxHttpInitialState } from "./http-request-redux";
-import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR, FETCH_STATE } from ".";
+import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from ".";
 
 export function createReducer<TParams, TResult, TError>(
     httpRequest: HttpRequest<TParams, TResult, TError>
@@ -47,20 +47,4 @@ export function createReducer<TParams, TResult, TError>(
 
         return state;
     };
-}
-
-export function getFetchStateFromAction(action: Action, defaultState: FETCH_STATE = FETCH_STATE_INITIAL): FETCH_STATE {
-    if (anyRequest.isRunning(action)) {
-        return FETCH_STATE_FETCHING;
-    }
-
-    if (anyRequest.isOk(action)) {
-        return FETCH_STATE_SUCCESS;
-    }
-
-    if (anyRequest.isError(action)) {
-        return FETCH_STATE_ERROR;
-    }
-
-    return defaultState || FETCH_STATE_INITIAL;
 }

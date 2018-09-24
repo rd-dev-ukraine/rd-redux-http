@@ -6,34 +6,16 @@ export interface ReduxHttpInitialState {
     fetchState: FETCH_STATE_INITIAL;
 }
 
-export function isFetchingStateInitial<TParams, TResult, TError>(
-    state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpInitialState {
-    return !!state && state.fetchState === FETCH_STATE_INITIAL;
-}
-
 export interface ReduxHttpFetchingState<TParams, TResult> {
     fetchState: FETCH_STATE_FETCHING;
     params: TParams;
     data?: TResult;
 }
 
-export function isFetchingStateFetching<TParams, TResult, TError>(
-    state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpFetchingState<TParams, TResult> {
-    return !!state && state.fetchState === FETCH_STATE_FETCHING;
-}
-
 export interface ReduxHttpSuccessState<TParams, TResult> {
     fetchState: FETCH_STATE_SUCCESS;
     params: TParams;
     data: TResult;
-}
-
-export function isFetchingStateSuccess<TParams, TResult, TError>(
-    state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpSuccessState<TParams, TResult> {
-    return !!state && state.fetchState === FETCH_STATE_SUCCESS;
 }
 
 export interface ReduxHttpErrorState<TParams, TResult, TError> {
@@ -43,36 +25,11 @@ export interface ReduxHttpErrorState<TParams, TResult, TError> {
     data?: TResult;
 }
 
-export function isFetchingStateError<TParams, TResult, TError>(
-    state?: ReduxHttpRequestState<TParams, TResult, TError>
-): state is ReduxHttpErrorState<TParams, TResult, TError> {
-    return !!state && state.fetchState === FETCH_STATE_ERROR;
-}
-
 export type ReduxHttpRequestState<TParams, TResult, TError> =
     | ReduxHttpInitialState
     | ReduxHttpFetchingState<TParams, TResult>
     | ReduxHttpSuccessState<TParams, TResult>
     | ReduxHttpErrorState<TParams, TResult, TError>;
-
-/**
- * Type guard checks if state contains non-emtpy data value.
- */
-export function hasFetchingData<TParams, TResult, TError>(
-    state?: ReduxHttpRequestState<TParams, TResult, TError> | any
-): state is { data: TResult } {
-    return !!state && state.fetchState !== FETCH_STATE_INITIAL && !!state.data;
-}
-
-/**
- * If state object contains non-empty data, returns that value, otherwise return default data value.
- */
-export function getFetchingDataOrDefault<TParams, TResult, TError>(
-    state: ReduxHttpRequestState<TParams, TResult, TError>,
-    defaultData: TResult
-): TResult {
-    return hasFetchingData(state) ? state.data || defaultData : defaultData;
-}
 
 /** Adds reducer method to HTTP request object. */
 export interface WithReducer<TParams, TResult, TError> {
