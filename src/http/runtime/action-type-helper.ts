@@ -34,9 +34,7 @@ export function formatActionType<TParams>(
     method: string,
     urlTemplate: string | ((params: TParams) => string) | ((params: TParams) => Promise<string>)
 ): string {
-    return `RD-REDUX-HTTP [${requestId}]${
-        name ? " [" + name + "] " : " "
-    }${operation.toUpperCase()} ${method.toUpperCase()} ${
-        typeof urlTemplate === "function" ? "<dynamic url>" : urlTemplate
+    return `RD-REDUX-HTTP [${requestId}] ${operation.toUpperCase()} ${method.toUpperCase()} ${
+        typeof urlTemplate === "function" ? name : urlTemplate
     }`;
 }
