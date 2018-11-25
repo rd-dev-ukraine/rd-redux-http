@@ -15,6 +15,7 @@ function createActions(id, method, url, name) {
 exports.createActions = createActions;
 var ActionFactoryImpl = /** @class */ (function () {
     function ActionFactoryImpl(requestId, method, url, name) {
+        var _this = this;
         this.requestId = requestId;
         this.method = method;
         this.url = url;
@@ -39,75 +40,75 @@ var ActionFactoryImpl = /** @class */ (function () {
                 throw new Error("Use this with Typescript typeof operator only");
             }
         };
-    }
-    ActionFactoryImpl.prototype.isMy = function (action) {
-        var match = this.match(action);
-        return match.isMatch && match.requestId === this.requestId;
-    };
-    ActionFactoryImpl.prototype.isRunning = function (action) {
-        var match = this.match(action);
-        return match.isMatch && match.requestId === this.requestId && match.operation === "running";
-    };
-    ActionFactoryImpl.prototype.isOk = function (action) {
-        var match = this.match(action);
-        return match.isMatch && match.requestId === this.requestId && match.operation === "ok";
-    };
-    ActionFactoryImpl.prototype.isError = function (action) {
-        var match = this.match(action);
-        return match.isMatch && match.requestId === this.requestId && match.operation === "error";
-    };
-    ActionFactoryImpl.prototype.isErrorResponse = function (action) {
-        return this.isError(action) && action.errorType === "response";
-    };
-    ActionFactoryImpl.prototype.isAuthorizationError = function (action) {
-        return this.isError(action) && action.errorType === "authorization";
-    };
-    ActionFactoryImpl.prototype.isTransportError = function (action) {
-        return this.isError(action) && action.errorType === "transport";
-    };
-    ActionFactoryImpl.prototype.isCompleted = function (action) {
-        return this.isOk(action) || this.isError(action);
-    };
-    ActionFactoryImpl.prototype.running = function (params) {
-        return {
-            type: this.actionType("running"),
-            params: params
+        this.isMy = function (action) {
+            var match = _this.match(action);
+            return match.isMatch && match.requestId === _this.requestId;
         };
-    };
-    ActionFactoryImpl.prototype.ok = function (params, result) {
-        return __assign({}, result, { type: this.actionType("ok"), params: params });
-    };
-    ActionFactoryImpl.prototype.error = function (params, error) {
-        return __assign({ type: this.actionType("error"), params: params }, error);
-    };
-    ActionFactoryImpl.prototype.trigger = function (params, body) {
-        if (body) {
+        this.isRunning = function (action) {
+            var match = _this.match(action);
+            return match.isMatch && match.requestId === _this.requestId && match.operation === "running";
+        };
+        this.isOk = function (action) {
+            var match = _this.match(action);
+            return match.isMatch && match.requestId === _this.requestId && match.operation === "ok";
+        };
+        this.isError = function (action) {
+            var match = _this.match(action);
+            return match.isMatch && match.requestId === _this.requestId && match.operation === "error";
+        };
+        this.isErrorResponse = function (action) {
+            return _this.isError(action) && action.errorType === "response";
+        };
+        this.isAuthorizationError = function (action) {
+            return _this.isError(action) && action.errorType === "authorization";
+        };
+        this.isTransportError = function (action) {
+            return _this.isError(action) && action.errorType === "transport";
+        };
+        this.isCompleted = function (action) {
+            return _this.isOk(action) || _this.isError(action);
+        };
+        this.running = function (params) {
             return {
-                type: this.actionType("request"),
-                params: params,
-                body: body
-            };
-        }
-        else {
-            return {
-                type: this.actionType("request"),
+                type: _this.actionType("running"),
                 params: params
             };
-        }
-    };
-    ActionFactoryImpl.prototype.isTriggering = function (action) {
-        var match = this.match(action);
-        return match.isMatch && match.operation === "request";
-    };
-    ActionFactoryImpl.prototype.match = function (action) {
-        if (!action) {
-            return { isMatch: false };
-        }
-        return action_type_helper_1.parseActionType(action.type || "");
-    };
-    ActionFactoryImpl.prototype.actionType = function (operation) {
-        return action_type_helper_1.formatActionType(this.requestId, this.name, operation, this.method, this.url);
-    };
+        };
+        this.ok = function (params, result) {
+            return __assign({}, result, { type: _this.actionType("ok"), params: params });
+        };
+        this.error = function (params, error) {
+            return __assign({ type: _this.actionType("error"), params: params }, error);
+        };
+        this.trigger = function (params, body) {
+            if (body) {
+                return {
+                    type: _this.actionType("request"),
+                    params: params,
+                    body: body
+                };
+            }
+            else {
+                return {
+                    type: _this.actionType("request"),
+                    params: params
+                };
+            }
+        };
+        this.isTriggering = function (action) {
+            var match = _this.match(action);
+            return match.isMatch && match.operation === "request";
+        };
+        this.match = function (action) {
+            if (!action) {
+                return { isMatch: false };
+            }
+            return action_type_helper_1.parseActionType(action.type || "");
+        };
+        this.actionType = function (operation) {
+            return action_type_helper_1.formatActionType(_this.requestId, _this.name, operation, _this.method, _this.url);
+        };
+    }
     return ActionFactoryImpl;
 }());
 //# sourceMappingURL=actions.js.map

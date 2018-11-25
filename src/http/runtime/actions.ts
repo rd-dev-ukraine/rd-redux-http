@@ -1,26 +1,23 @@
 import { Action } from "redux";
-
 import {
     ActionFactory,
-    RequestRunningAction,
-    ReduxHttpLifecycleActionBase,
     ActionTypes,
-    OkResultAction,
-    ErrorResponseAction,
-    ErrorResultAction,
-    OkResult,
-    ErrorResponseResult,
     AuthorizationErrorResult,
-    TransportErrorResult,
     AuthorizationErrorResultAction,
-    TransportErrorResultAction,
+    ErrorResponseAction,
+    ErrorResponseResult,
+    ErrorResultAction,
     MakeRequestActionFactory,
     MakeRequestWithBodyActionFactory,
-    TriggerRequestAction,
-    TriggerRequestWithBodyAction
+    OkResult,
+    OkResultAction,
+    ReduxHttpLifecycleActionBase,
+    RequestRunningAction,
+    TransportErrorResult,
+    TransportErrorResultAction,
+    TriggerRequestAction
 } from "../api";
-
-import { formatActionType, parseActionType, MatchActionInfo, OperationType } from "./action-type-helper";
+import { formatActionType, MatchActionInfo, OperationType, parseActionType } from "./action-type-helper";
 
 export function createActions<TParams, TResult, TError, TBody = undefined>(
     id: string,
@@ -30,7 +27,7 @@ export function createActions<TParams, TResult, TError, TBody = undefined>(
 ): ActionFactory<TParams, TResult, TError> &
     MakeRequestActionFactory<TParams> &
     MakeRequestWithBodyActionFactory<TParams, TBody> {
-    return new ActionFactoryImpl(id, method, url, name);
+    return new ActionFactoryImpl(id, method, url, name) as any;
 }
 
 class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined>
@@ -67,71 +64,71 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined>
         private name: string
     ) {}
 
-    isMy(action?: Action): action is ReduxHttpLifecycleActionBase<TParams> {
+    isMy = (action?: Action): action is ReduxHttpLifecycleActionBase<TParams> => {
         const match = this.match(action);
         return match.isMatch && match.requestId === this.requestId;
-    }
+    };
 
-    isRunning(action?: Action): action is RequestRunningAction<TParams> {
+    isRunning = (action?: Action): action is RequestRunningAction<TParams> => {
         const match = this.match(action);
         return match.isMatch && match.requestId === this.requestId && match.operation === "running";
-    }
+    };
 
-    isOk(action?: Action): action is OkResultAction<TParams, TResult> {
+    isOk = (action?: Action): action is OkResultAction<TParams, TResult> => {
         const match = this.match(action);
         return match.isMatch && match.requestId === this.requestId && match.operation === "ok";
-    }
+    };
 
-    isError(action?: Action): action is ErrorResultAction<TParams, TError> {
+    isError = (action?: Action): action is ErrorResultAction<TParams, TError> => {
         const match = this.match(action);
         return match.isMatch && match.requestId === this.requestId && match.operation === "error";
-    }
+    };
 
-    isErrorResponse(action?: Action): action is ErrorResponseAction<TParams, TError> {
+    isErrorResponse = (action?: Action): action is ErrorResponseAction<TParams, TError> => {
         return this.isError(action) && action.errorType === "response";
-    }
+    };
 
-    isAuthorizationError(action?: Action): action is AuthorizationErrorResultAction<TParams> {
+    isAuthorizationError = (action?: Action): action is AuthorizationErrorResultAction<TParams> => {
         return this.isError(action) && action.errorType === "authorization";
-    }
+    };
 
-    isTransportError(action?: Action): action is TransportErrorResultAction<TParams> {
+    isTransportError = (action?: Action): action is TransportErrorResultAction<TParams> => {
         return this.isError(action) && action.errorType === "transport";
-    }
+    };
 
-    isCompleted(action?: Action): action is OkResultAction<TParams, TResult> | ErrorResultAction<TParams, TError> {
+    isCompleted = (
+        action?: Action
+    ): action is OkResultAction<TParams, TResult> | ErrorResultAction<TParams, TError> => {
         return this.isOk(action) || this.isError(action);
-    }
+    };
 
-    running(params: TParams): RequestRunningAction<TParams> {
+    running = (params: TParams): RequestRunningAction<TParams> => {
         return {
             type: this.actionType("running"),
             params
         };
-    }
+    };
 
-    ok(params: TParams, result: OkResult<TResult>): OkResultAction<TParams, TResult> {
+    ok = (params: TParams, result: OkResult<TResult>): OkResultAction<TParams, TResult> => {
         return {
             ...result,
             type: this.actionType("ok"),
             params
         };
-    }
+    };
 
-    error(
+    error = (
         params: TParams,
         error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult
-    ): ErrorResultAction<TParams, TError> {
+    ): ErrorResultAction<TParams, TError> => {
         return {
             type: this.actionType("error"),
             params,
             ...error
         };
-    }
+    };
 
-    trigger(params: TParams): TriggerRequestAction<TParams>;
-    trigger(params: TParams, body: TBody): TriggerRequestWithBodyAction<TParams, TBody>;
-    trigger(params: TParams, body?: any): any {
+    trigger = (params: TParams, body?: any): any => {
         if (body) {
             return {
                 type: this.actionType("request"),
@@ -144,23 +141,22 @@ class ActionFactoryImpl<TParams, TResult, TError, TBody = undefined>
                 params
             } as any;
         }
-    }
+    };
 
-    isTriggering(action?: Action): action is TriggerRequestWithBodyAction<TParams, TBody>;
-    isTriggering(action?: Action): action is TriggerRequestAction<TParams> {
+    isTriggering: any = (action?: Action): action is TriggerRequestAction<TParams> => {
         const match = this.match(action);
         return match.isMatch && match.operation === "request";
-    }
+    };
 
-    protected match(action?: Action): MatchActionInfo | { isMatch: false } {
+    protected match = (action?: Action): MatchActionInfo | { isMatch: false } => {
         if (!action) {
             return { isMatch: false };
         }
 
         return parseActionType(action.type || "");
-    }
+    };
 
-    protected actionType(operation: OperationType): string {
+    protected actionType = (operation: OperationType): string => {
         return formatActionType(this.requestId, this.name, operation, this.method, this.url);
-    }
+    };
 }
