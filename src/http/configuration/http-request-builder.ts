@@ -252,7 +252,7 @@ class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TPa
      */
     post<TConvertedResult, TConvertedError>(
         process: (
-            result: HttpResult<TParams, TError>,
+            result: HttpResult<TResult, TError>,
             params: TParams
         ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
     ): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError> {
@@ -283,7 +283,7 @@ class RequestWithBodyBuilder<TBody, TParams, TResult, TError>
      */
     post<TConvertedResult, TConvertedError>(
         process: (
-            result: HttpResult<TParams, TError>,
+            result: HttpResult<TResult, TError>,
             params: TParams
         ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
     ): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError> {

@@ -331,7 +331,7 @@ export interface HttpRequestBuilder<TParams, TResult, TError> {
      */
     post<TConvertedResult = TResult, TConvertedError = TError>(
         process: (
-            result: HttpResult<TParams, TError>,
+            result: HttpResult<TResult, TError>,
             params: TParams
         ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
     ): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError>;
@@ -351,7 +351,7 @@ export interface HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
      */
     post<TConvertedResult = TResult, TConvertedError = TError>(
         process: (
-            result: HttpResult<TParams, TError>,
+            result: HttpResult<TResult, TError>,
             params: TParams
         ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
     ): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError>;

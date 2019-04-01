@@ -254,7 +254,7 @@ export interface HttpRequestBuilder<TParams, TResult, TError> {
     /**
      * Changes parsed and processed result (success or error) of HTTP request.
      */
-    post<TConvertedResult = TResult, TConvertedError = TError>(process: (result: HttpResult<TParams, TError>, params: TParams) => Promise<HttpResult<TConvertedResult, TConvertedError>>): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError>;
+    post<TConvertedResult = TResult, TConvertedError = TError>(process: (result: HttpResult<TResult, TError>, params: TParams) => Promise<HttpResult<TConvertedResult, TConvertedError>>): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError>;
     /**
      * Finishes HTTP request configuration and creates an object which can be used for running HTTP requests.
      */
@@ -267,7 +267,7 @@ export interface HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
     /**
      * Changes parsed and processed result (success or error) of HTTP request.
      */
-    post<TConvertedResult = TResult, TConvertedError = TError>(process: (result: HttpResult<TParams, TError>, params: TParams) => Promise<HttpResult<TConvertedResult, TConvertedError>>): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError>;
+    post<TConvertedResult = TResult, TConvertedError = TError>(process: (result: HttpResult<TResult, TError>, params: TParams) => Promise<HttpResult<TConvertedResult, TConvertedError>>): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError>;
     /**
      * Finishes HTTP request configuration and creates an object which can be used for running HTTP requests.
      */
