@@ -329,7 +329,7 @@ export interface HttpRequestBuilder<TParams, TResult, TError> {
     /**
      * Changes parsed and processed result (success or error) of HTTP request.
      */
-    post<TConvertedResult, TConvertedError>(
+    post<TConvertedResult = TResult, TConvertedError = TError>(
         process: (
             result: HttpResult<TParams, TError>,
             params: TParams
@@ -349,7 +349,7 @@ export interface HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
     /**
      * Changes parsed and processed result (success or error) of HTTP request.
      */
-    post<TConvertedResult, TConvertedError>(
+    post<TConvertedResult = TResult, TConvertedError = TError>(
         process: (
             result: HttpResult<TParams, TError>,
             params: TParams
