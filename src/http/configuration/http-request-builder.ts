@@ -40,6 +40,7 @@ class EntryPoint implements HttpRequestEntryPoint {
             convertResult: undefined,
             fetch: undefined,
             pre: [],
+            post: [],
             processResponse: undefined as any
         };
 
@@ -246,6 +247,24 @@ class RequestBuilder<TParams, TResult, TError> implements HttpRequestBuilder<TPa
         }
     }
 
+    /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    post<TConvertedResult, TConvertedError>(
+        process: (
+            result: HttpResult<TParams, TError>,
+            params: TParams
+        ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
+    ): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError> {
+        if (!process) {
+            throw new Error("Process function is expected but not defined.");
+        }
+
+        this.config.post.push(process);
+
+        return new RequestBuilder(this.config as any);
+    }
+
     build(): HttpRequest<TParams, TResult, TError> {
         return createHttpRequest<undefined, TParams, TResult, TError>(this.config) as any;
     }
@@ -257,6 +276,24 @@ class RequestWithBodyBuilder<TBody, TParams, TResult, TError>
         if (!config) {
             throw new Error("Configuration object is missing.");
         }
+    }
+
+    /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    post<TConvertedResult, TConvertedError>(
+        process: (
+            result: HttpResult<TParams, TError>,
+            params: TParams
+        ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
+    ): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError> {
+        if (!process) {
+            throw new Error("Process function is expected but not defined.");
+        }
+
+        this.config.post.push(process);
+
+        return new RequestWithBodyBuilder(this.config as any);
     }
 
     build(): HttpRequestWithBody<TBody, TParams, TResult, TError> {

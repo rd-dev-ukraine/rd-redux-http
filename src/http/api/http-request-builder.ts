@@ -8,6 +8,11 @@ export type PrepareRequestWithBodyFunction<TBody, TParams> = (
     body: TBody
 ) => Request;
 
+export type PostProcessResponse<TParams, TInitialResult, TInitialError, TConvertedResult, TConvertedError> = (
+    result: HttpResult<TInitialResult, TInitialError>,
+    params: TParams
+) => Promise<HttpResult<TConvertedResult, TConvertedError>>;
+
 export type UrlTemplate<TParams> = string | ((params: TParams) => string) | ((params: TParams) => Promise<string>);
 
 export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
@@ -43,6 +48,11 @@ export interface HttpRequestConfig<TBody, TParams, TResult, TError> {
      * Converts string body to result or error.
      */
     convertResult?: (response: Response, isError: boolean, params: TParams) => Promise<TResult | TError>;
+
+    /**
+     * Changes
+     */
+    post: PostProcessResponse<TParams, any, any, any, any>[];
 }
 
 // Entry point for fluent request configuration
@@ -317,6 +327,16 @@ export interface HttpRequestConfiguratorWithBody<TBody, TParams> {
  */
 export interface HttpRequestBuilder<TParams, TResult, TError> {
     /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    post<TConvertedResult, TConvertedError>(
+        process: (
+            result: HttpResult<TParams, TError>,
+            params: TParams
+        ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
+    ): HttpRequestBuilder<TParams, TConvertedResult, TConvertedError>;
+
+    /**
      * Finishes HTTP request configuration and creates an object which can be used for running HTTP requests.
      */
     build(): HttpRequest<TParams, TResult, TError>;
@@ -326,6 +346,16 @@ export interface HttpRequestBuilder<TParams, TResult, TError> {
  * Creates an instances of HTTP request.
  */
 export interface HttpRequestWithBodyBuilder<TBody, TParams, TResult, TError> {
+    /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    post<TConvertedResult, TConvertedError>(
+        process: (
+            result: HttpResult<TParams, TError>,
+            params: TParams
+        ) => Promise<HttpResult<TConvertedResult, TConvertedError>>
+    ): HttpRequestWithBodyBuilder<TBody, TParams, TConvertedResult, TConvertedError>;
+
     /**
      * Finishes HTTP request configuration and creates an object which can be used for running HTTP requests.
      */

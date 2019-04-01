@@ -35,16 +35,24 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(
                 config.fetch || ((request: Request, params: TParams, body: TBody) => fetch(request));
             const processResponse = config.processResponse || defaultProcessResponseFactory(config);
 
-            return actualFetch(request, params, body).then(
-                response => processResponse(response, params, body),
-                error =>
-                    Promise.resolve<TransportErrorResult>({
-                        ok: false,
-                        errorType: "transport",
-                        reason: "fetch-rejected",
-                        error
-                    })
-            );
+            const postProcessResult: (
+                params: TParams,
+                result: HttpResult<TResult, TError>
+            ) => Promise<HttpResult<any, any>> = (params, result) =>
+                reduceAsync(config.post || [], (fn, prevResult) => fn(prevResult, params), result);
+
+            return actualFetch(request, params, body)
+                .then(
+                    response => processResponse(response, params, body),
+                    error =>
+                        Promise.resolve<TransportErrorResult>({
+                            ok: false,
+                            errorType: "transport",
+                            reason: "fetch-rejected",
+                            error
+                        })
+                )
+                .then(r => postProcessResult(params, r));
         });
     }) as any) as HttpRequestWithBody<TBody, TParams, TResult, TError>;
 
@@ -61,12 +69,12 @@ export function createHttpRequest<TBody, TParams, TResult, TError>(
 function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(
     config: HttpRequestConfig<TBody, TParams, TResult, TError>
 ): typeof config.processResponse {
-    const convertResult = config.convertResult || ((response: Response) => response.clone().json());
+    const convertResult: any = config.convertResult || ((response: Response) => response.clone().json());
 
     return (response: Response, params: TParams, body: TBody): Promise<HttpResult<TResult, TError>> => {
         if (response.ok || response.status === 400) {
             return convertResult(response.clone(), response.ok, params).then(
-                parsed => {
+                (parsed: any) => {
                     if (response.ok) {
                         const result: OkResult<TResult> = {
                             ok: true,
@@ -84,7 +92,7 @@ function defaultProcessResponseFactory<TBody, TParams, TResult, TError>(
                         return error;
                     }
                 },
-                err =>
+                (err: any) =>
                     Promise.resolve<TransportErrorResult>({
                         ok: false,
                         errorType: "transport",
@@ -136,4 +144,16 @@ class HttpTypes<TBody, TParams, TResult, TError> implements HttpRequestWithBodyT
     get reduxState(): ReduxHttpRequestState<TParams, TResult, TError> {
         throw new Error("Use this in Typescript typeof expression only.");
     }
+}
+
+async function reduceAsync<T extends (...args: any[]) => Promise<any>>(
+    src: T[],
+    runItem: (currentItem: T, prevResult: any) => Promise<any>,
+    initialResult: any = undefined
+) {
+    for (const currentItem of src) {
+        initialResult = await runItem(currentItem, initialResult);
+    }
+
+    return initialResult;
 }

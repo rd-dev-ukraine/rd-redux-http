@@ -22,6 +22,7 @@ var EntryPoint = /** @class */ (function () {
             convertResult: undefined,
             fetch: undefined,
             pre: [],
+            post: [],
             processResponse: undefined
         };
         return new RequestConfigurator(config);
@@ -174,6 +175,16 @@ var RequestBuilder = /** @class */ (function () {
             throw new Error("Configuration object is missing.");
         }
     }
+    /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    RequestBuilder.prototype.post = function (process) {
+        if (!process) {
+            throw new Error("Process function is expected but not defined.");
+        }
+        this.config.post.push(process);
+        return new RequestBuilder(this.config);
+    };
     RequestBuilder.prototype.build = function () {
         return runtime_1.createHttpRequest(this.config);
     };
@@ -186,6 +197,16 @@ var RequestWithBodyBuilder = /** @class */ (function () {
             throw new Error("Configuration object is missing.");
         }
     }
+    /**
+     * Changes parsed and processed result (success or error) of HTTP request.
+     */
+    RequestWithBodyBuilder.prototype.post = function (process) {
+        if (!process) {
+            throw new Error("Process function is expected but not defined.");
+        }
+        this.config.post.push(process);
+        return new RequestWithBodyBuilder(this.config);
+    };
     RequestWithBodyBuilder.prototype.build = function () {
         return runtime_1.createHttpRequest(this.config);
     };
