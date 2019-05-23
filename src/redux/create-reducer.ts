@@ -39,7 +39,7 @@ export function createReducer<TParams, TResult, TError>(
         if (httpRequest.actions.isError(action)) {
             return {
                 ...state,
-                error: action,
+                ...action,
                 params: action.params,
                 fetchState: FETCH_STATE_ERROR
             };

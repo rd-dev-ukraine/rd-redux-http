@@ -45,6 +45,46 @@ var FetchingState = /** @class */ (function () {
     FetchingState.getDataOrDefault = function (state, defaultData) {
         return FetchingState.hasData(state) ? state.data || defaultData : defaultData;
     };
+    FetchingState.getErrorResult = function (state) {
+        if (FetchingState.isError(state)) {
+            switch (state.errorType) {
+                case "authorization": {
+                    var result = {
+                        ok: false,
+                        errorType: "authorization",
+                        status: state.status
+                    };
+                    return result;
+                }
+                case "response": {
+                    var result = {
+                        ok: false,
+                        errorType: "response",
+                        error: state.error
+                    };
+                    return result;
+                }
+                case "transport": {
+                    var result = {
+                        ok: false,
+                        errorType: "transport",
+                        reason: state.reason,
+                        statusCode: state.statusCode,
+                        error: state.error
+                    };
+                    return result;
+                }
+            }
+        }
+        return undefined;
+    };
+    FetchingState.getError = function (state) {
+        var result = FetchingState.getErrorResult(state);
+        if (!result || result.errorType !== "response") {
+            return undefined;
+        }
+        return result.error;
+    };
     FetchingState.fromAction = function (action, defaultState) {
         if (defaultState === void 0) { defaultState = exports.FETCH_STATE_INITIAL; }
         if (any_request_1.anyRequest.isRunning(action)) {

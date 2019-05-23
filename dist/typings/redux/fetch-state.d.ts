@@ -1,5 +1,6 @@
 import { ReduxHttpRequestState, ReduxHttpInitialState, ReduxHttpFetchingState, ReduxHttpSuccessState, ReduxHttpErrorState } from "./http-request-redux";
 import { Action } from "redux";
+import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult } from "../http";
 export declare const FETCH_STATE_INITIAL = "initial";
 export declare type FETCH_STATE_INITIAL = "initial";
 export declare const FETCH_STATE_FETCHING = "fetching";
@@ -31,5 +32,7 @@ export declare class FetchingState {
         params: TParams;
     };
     static getDataOrDefault: <TParams, TResult, TError>(state: ReduxHttpRequestState<TParams, TResult, TError>, defaultData: TResult) => TResult;
+    static getErrorResult: <TParams, TResult, TError>(state: ReduxHttpRequestState<TParams, TResult, TError>) => AuthorizationErrorResult | TransportErrorResult | ErrorResponseResult<TError> | undefined;
+    static getError: <TParams, TResult, TError>(state: ReduxHttpRequestState<TParams, TResult, TError>) => TError | undefined;
     static fromAction: (action: Action, defaultState?: FETCH_STATE) => FETCH_STATE;
 }

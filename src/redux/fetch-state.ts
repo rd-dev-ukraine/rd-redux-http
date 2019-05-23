@@ -7,6 +7,7 @@ import {
 } from "./http-request-redux";
 import { Action } from "redux";
 import { anyRequest } from "../http/runtime/any-request";
+import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult } from "../http";
 
 export const FETCH_STATE_INITIAL = "initial";
 export type FETCH_STATE_INITIAL = "initial";
@@ -95,6 +96,55 @@ export class FetchingState {
         defaultData: TResult
     ): TResult => {
         return FetchingState.hasData(state) ? state.data || defaultData : defaultData;
+    };
+
+    public static getErrorResult = <TParams, TResult, TError>(
+        state: ReduxHttpRequestState<TParams, TResult, TError>
+    ): ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult | undefined => {
+        if (FetchingState.isError(state)) {
+            switch (state.errorType) {
+                case "authorization": {
+                    const result: AuthorizationErrorResult = {
+                        ok: false,
+                        errorType: "authorization",
+                        status: state.status!
+                    };
+                    return result;
+                }
+                case "response": {
+                    const result: ErrorResponseResult<TError> = {
+                        ok: false,
+                        errorType: "response",
+                        error: state.error!
+                    };
+                    return result;
+                }
+                case "transport": {
+                    const result: TransportErrorResult = {
+                        ok: false,
+                        errorType: "transport",
+                        reason: state.reason!,
+                        statusCode: state.statusCode,
+                        error: state.error
+                    };
+
+                    return result;
+                }
+            }
+        }
+
+        return undefined;
+    };
+
+    public static getError = <TParams, TResult, TError>(
+        state: ReduxHttpRequestState<TParams, TResult, TError>
+    ): TError | undefined => {
+        const result = FetchingState.getErrorResult(state);
+        if (!result || result.errorType !== "response") {
+            return undefined;
+        }
+
+        return result.error;
     };
 
     public static fromAction = (action: Action, defaultState: FETCH_STATE = FETCH_STATE_INITIAL): FETCH_STATE => {

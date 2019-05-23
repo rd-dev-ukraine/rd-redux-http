@@ -23,7 +23,7 @@ function createReducer(httpRequest) {
             return __assign({}, state, { error: undefined, data: action.result, params: action.params, fetchState: _1.FETCH_STATE_SUCCESS });
         }
         if (httpRequest.actions.isError(action)) {
-            return __assign({}, state, { error: action, params: action.params, fetchState: _1.FETCH_STATE_ERROR });
+            return __assign({}, state, action, { params: action.params, fetchState: _1.FETCH_STATE_ERROR });
         }
         return state;
     };

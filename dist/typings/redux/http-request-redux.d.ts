@@ -1,6 +1,6 @@
 import { Action } from "redux";
-import { ErrorResponseResult, AuthorizationErrorResult, TransportErrorResult, HttpRequestTypes } from "../http";
-import { FETCH_STATE_INITIAL, FETCH_STATE_FETCHING, FETCH_STATE_SUCCESS, FETCH_STATE_ERROR } from "./fetch-state";
+import { HttpRequestTypes } from "../http";
+import { FETCH_STATE_ERROR, FETCH_STATE_FETCHING, FETCH_STATE_INITIAL, FETCH_STATE_SUCCESS } from "./fetch-state";
 export interface ReduxHttpInitialState {
     fetchState: FETCH_STATE_INITIAL;
 }
@@ -17,7 +17,11 @@ export interface ReduxHttpSuccessState<TParams, TResult> {
 export interface ReduxHttpErrorState<TParams, TResult, TError> {
     fetchState: FETCH_STATE_ERROR;
     params: TParams;
-    error: ErrorResponseResult<TError> | AuthorizationErrorResult | TransportErrorResult;
+    errorType: "response" | "transport" | "authorization";
+    error?: TError;
+    status?: number;
+    statusCode?: number;
+    reason: "fetch-rejected" | "invalid-body" | "other";
     data?: TResult;
 }
 export declare type ReduxHttpRequestState<TParams, TResult, TError> = ReduxHttpInitialState | ReduxHttpFetchingState<TParams, TResult> | ReduxHttpSuccessState<TParams, TResult> | ReduxHttpErrorState<TParams, TResult, TError>;
