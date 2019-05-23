@@ -21,6 +21,10 @@ export function createReducer<TParams, TResult, TError>(
             return {
                 ...state,
                 error: undefined,
+                errorType: undefined,
+                status: undefined,
+                statusCode: undefined,
+                reason: undefined,
                 params: action.params,
                 fetchState: FETCH_STATE_FETCHING
             } as any;
@@ -30,6 +34,10 @@ export function createReducer<TParams, TResult, TError>(
             return {
                 ...state,
                 error: undefined,
+                errorType: undefined,
+                status: undefined,
+                statusCode: undefined,
+                reason: undefined,
                 data: action.result,
                 params: action.params,
                 fetchState: FETCH_STATE_SUCCESS

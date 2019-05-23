@@ -1,6 +1,6 @@
 {
   "name": "rd-redux-http",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": false,
   "description": "HTTP Network requests integrated with Redux",
   "main": "dist/index.js",
